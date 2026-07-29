@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Skola — rate a teacher on two axes: how much you learned and how much you liked it. One tap. The same model as Weryta's Fairy Dice, in a second domain.">
+<link rel="canonical" href="https://skola.weryta.com/">
+<link rel="alternate" hreflang="en" href="https://skola.weryta.com/">
+<link rel="alternate" hreflang="pl" href="https://skola.weryta.com/pl/">
+<link rel="alternate" hreflang="x-default" href="https://skola.weryta.com/">
+<title>Skola — teacher rating on two axes, one tap</title>
+<style>
+:root{
+  --paper:#eceff3; --card:#ffffff; --ink:#141a20; --muted:#59646f;
+  --line:#dce2e9; --accent:#0e7a6b; --accent-ink:#0b5f54;
+  --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --paper:#0d1217; --card:#151c23; --ink:#e7edf3; --muted:#94a2b0;
+  --line:#232d38; --accent:#39b7a2; --accent-ink:#5fcdb9;
+}}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px}
+.rule{max-width:960px;margin:28px auto;border:0;border-top:1px solid var(--line)}
+.langsw{max-width:960px;margin:0 auto;padding:20px 24px 0;font-family:var(--mono);font-size:12.5px;text-align:right}
+.langsw a{color:var(--muted);text-decoration:none}.langsw a.on{color:var(--ink);font-weight:700}.langsw a:hover{color:var(--accent)}
+.hero{padding:56px 24px 8px;max-width:960px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--accent-ink);text-transform:uppercase;margin:0 0 18px}
+h1{font-family:var(--serif);font-size:clamp(32px,5.4vw,48px);font-weight:600;line-height:1.06;letter-spacing:-.015em;margin:0;text-wrap:balance}
+h1 .light{color:var(--muted);font-style:italic;font-weight:500}
+h2{font-family:var(--serif);font-size:24px;font-weight:600;margin:36px 0 12px}
+.lede{font-size:18px;color:var(--muted);max-width:66ch;margin:20px 0 0}
+.lede strong{color:var(--ink);font-weight:600}
+table.map{border-collapse:collapse;width:100%;max-width:760px;font-size:14.5px}
+table.map th,table.map td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+table.map th{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+footer{padding:44px 24px 72px;color:var(--muted);font-size:12.5px}
+footer .fnote{max-width:72ch}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="langsw"><a class="on" href="/">EN</a> · <a href="/pl/">PL</a> &nbsp;|&nbsp; <a href="https://physix.weryta.com/">← physix</a> · <a href="https://girltech.me/S">Dan’s Skola</a></div>
+<section class="hero">
+  <p class="eyebrow">Skola — GirlTech USA × Weryta</p>
+  <h1>How much did you learn, <span class="light">and did you like it?</span></h1>
+  <p class="lede">One star conflates two different things. Skola keeps them apart:
+  the vertical axis is <strong>learning</strong>, the horizontal is <strong>liking</strong> —
+  and the horizontal is color, from red to blue, <strong>the cooler the better</strong>.
+  A rating is one tap; a teacher is a <strong>stream of taps over days</strong>, never a single average.
+  The quadrant this exists for: <em>“I didn’t get along with the teacher, but I learned a lot.”</em></p>
+</section>
+<hr class="rule">
+<section class="wrap">
+  <div id="skola"></div>
+</section>
+<hr class="rule">
+<section class="wrap">
+  <h2>One model, two domains</h2>
+  <p class="lede" style="margin:0 0 16px">The university grid above runs on <strong>live data from Dan’s Skola</strong>
+  (girltech.me/S) rendered by this page’s own code — his work inside our work. It is the same
+  two-axis model <a href="https://weryta.pl">Weryta</a> uses to rate answers:</p>
+  <table class="map">
+    <tr><th></th><th>Weryta · Fairy Dice</th><th>Skola · teacher rating</th></tr>
+    <tr><td>Axis 1</td><td>is it <strong>true</strong> (agree / disagree)</td><td>did I <strong>learn</strong> (a lot / nothing)</td></tr>
+    <tr><td>Axis 2</td><td>do I <strong>like it</strong> — apex color: good / bad / neutral.
+        Dan frames the same axis more broadly, as declared bias: “you rank the quality of information by color”.</td>
+        <td>did I <strong>like it</strong> (cell color, cooler = better)</td></tr>
+    <tr><td>Seventh state</td><td>no rating — the die didn’t land</td><td>no tap — no record; “✋ I’m not keeping up” is a separate signal</td></tr>
+    <tr><td>Record</td><td>append-only ledger, never edits facts</td><td>stream of votes over days, never one average</td></tr>
+    <tr><td>Signal</td><td>one verdict means little; repetition matters</td><td>one bad vote means little; <em>the same kid answering that again</em> matters</td></tr>
+  </table>
+</section>
+<footer class="wrap">
+  <p class="fnote">University data: live from <a href="https://girltech.me/S">girltech.me/S</a> (GirlTech USA, Dr. Dan),
+  snapshot fallback if the API is unreachable. School (K-8) data is synthetic, for a fictional school —
+  pilot data would need the anonymity / one-vote-per-person question settled first. Ratings made on this
+  page stay in your browser. Questions? <a href="mailto:kontakt@weryta.pl">kontakt@weryta.pl</a></p>
+  <p class="fnote" style="margin-top:12px"><strong>One note on the learning axis.</strong> Dan’s API numbers its
+  grid rows from the top, and records a tap on the top row — the row his own instructions call “I learned a
+  lot” — as the value <code>0</code>. Its <code>learning</code> field therefore runs opposite to its name, and
+  we read it accordingly, so a teacher he describes as one whose students “really learned a lot” reads high
+  here. On his screen the two inversions cancel and the picture is right; only the number is reversed. Colours
+  are unaffected — they come from the columns. Flagged to Dan.</p>
+</footer>
+<script src="/assets/skola-data.js"></script>
+<script src="/assets/skola.js"></script>
+<script>Skola.mount(document.getElementById('skola'), { lang: 'en' });</script>
+</body>
+</html>
