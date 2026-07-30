@@ -34,7 +34,7 @@
       axisY: ['learned nothing', 'learned a lot'], axisX: ['hated it', 'loved it'],
       live: 'live data from girltech.me/S', snapshot: 'snapshot of girltech.me/S (live API unreachable)',
       synth: 'synthetic demo data', votes: 'votes', back: '← back',
-      rateHere: 'Rate: one tap on the grid', rateHint: 'Top = learned a lot. Right = loved it. You may also not tap at all — no tap, no record (the die didn’t land).',
+      rateHere: 'Rate: one tap on the grid', rateHint: 'Up = I learned more. Right = I liked it more. You may also not tap at all — no tap, no record, and that is a fine answer too.',
       dunno: 'I’m not keeping up', dunnoDone: 'noted — the teacher sees a hand you didn’t have to raise',
       dunnoCount: function (n) { return n + '× “I’m not keeping up” today'; },
       voted: 'saved locally — one more tap in the stream', undo: 'undo last',
@@ -71,7 +71,7 @@
       axisY: ['nic się nie nauczyłem', 'dużo się nauczyłem'], axisX: ['nie znosiłem', 'uwielbiałem'],
       live: 'dane na żywo z girltech.me/S', snapshot: 'migawka girltech.me/S (API niedostępne)',
       synth: 'dane syntetyczne (demo)', votes: 'głosów', back: '← wróć',
-      rateHere: 'Oceń: jedno kliknięcie w kwadrat', rateHint: 'Góra = dużo się nauczyłem. Prawo = podobało mi się. Możesz też nie klikać wcale — brak kliknięcia to brak rekordu (kość nie upadła).',
+      rateHere: 'Oceń: jedno kliknięcie w kwadrat', rateHint: 'Wyżej = więcej się nauczyłem. W prawo = bardziej mi się podobało. Możesz też nie klikać wcale — brak kliknięcia to brak rekordu i to też jest w porządku.',
       dunno: 'Nie nadążam', dunnoDone: 'zapisane — nauczyciel widzi rękę, której nie musiałeś podnosić',
       dunnoCount: function (n) { return n + '× „nie nadążam” dzisiaj'; },
       voted: 'zapisano lokalnie — jeszcze jeden głos w strumieniu', undo: 'cofnij ostatni',
@@ -232,7 +232,7 @@
     SCHOOL_TEACHERS.forEach(function (t) {
       days.forEach(function (day) {
         KIDS.forEach(function (kid) {
-          if (rnd() < 0.18) return; /* absent / didn't tap — the die didn't land */
+          if (rnd() < 0.18) return; /* absent, or simply did not tap */
           var gx, gy;
           if (t.id === 'sd3' && kid === 'Dev') {
             gx = rnd() < 0.7 ? 0 : 1; gy = rnd() < 0.8 ? 0 : 1;           /* the repeating bottom-left kid */
