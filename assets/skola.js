@@ -55,8 +55,8 @@
       teachersLede: 'Tiles, not overlapping logos — each teacher: photo, overall color, vote map.',
       teacherCount: function (n) { return n + ' teachers'; },
       cumulativeLede: 'All votes in the school, one square. “You get a cumulative for the school, and each teacher gets a breakdown.”',
-      compareLede: 'Institutions side by side, sorted by the learning axis.',
-      learning: 'learning', liked: 'liked',
+      compareLede: 'Side by side, most learning first. This is only one of the two axes — the colour still carries whether people liked it, so a high place here is not a total score.',
+      learning: 'learned', liked: 'liked it',
       studentVotes: function (n) { return n + ' answers'; },
       dataNote: 'University data comes live from Dan’s Skola at girltech.me/S — the same model rendered by our code. School data is synthetic.',
       dataNoteSnap: 'The live API was unreachable, so university data here is our bundled snapshot of Dan’s Skola (girltech.me/S) taken 2026-07-29 — not today’s votes. School data is synthetic.',
@@ -92,8 +92,8 @@
       teachersLede: 'Kafelki zamiast nakładających się logotypów — nauczyciel: zdjęcie, kolor zbiorczy, mapa głosów.',
       teacherCount: function (n) { return n + ' nauczycieli'; },
       cumulativeLede: 'Wszystkie głosy szkoły w jednym kwadracie. „Szkoła dostaje wynik zbiorczy, a każdy nauczyciel rozkład tego, jak sobie radzi w klasie.”',
-      compareLede: 'Instytucje obok siebie, wg osi uczenia się.',
-      learning: 'nauka', liked: 'sympatia',
+      compareLede: 'Obok siebie, najpierw najwięcej nauki. To tylko jedna z dwóch osi — kolor wciąż mówi, czy się podobało, więc wysokie miejsce tutaj to nie ocena ogólna.',
+      learning: 'nauki', liked: 'sympatii',
       studentVotes: function (n) { return n + ' odpowiedzi'; },
       dataNote: 'Dane uczelni płyną na żywo z aplikacji Dana (girltech.me/S) — ten sam model, nasz rendering. Dane szkolne są syntetyczne.',
       dataNoteSnap: 'API było niedostępne, więc dane uczelni pochodzą z naszej migawki aplikacji Dana (girltech.me/S) z 29.07.2026 — to nie są dzisiejsze głosy. Dane szkolne są syntetyczne.',
@@ -117,6 +117,14 @@
   function learningOf(cells) {
     var n = 0, acc = 0;
     for (var gy = 0; gy < 5; gy++) for (var gx = 0; gx < 5; gx++) { n += cells[gy][gx]; acc += cells[gy][gx] * gy / 4; }
+    return n ? acc / n : 0;
+  }
+  /* liking on the same 0..1 scale as learning; equals Dan's color_x field exactly.
+     Shown NEXT TO learning on purpose: one number alone reads as a total score,
+     which is the single-score problem this whole model exists to avoid. */
+  function likingOf(cells) {
+    var n = 0, acc = 0;
+    for (var gy = 0; gy < 5; gy++) for (var gx = 0; gx < 5; gx++) { n += cells[gy][gx]; acc += cells[gy][gx] * gx / 4; }
     return n ? acc / n : 0;
   }
   function aggRGB(cells) {
@@ -623,6 +631,7 @@
           '<div class="sk-head">' + avatarHtml(te.name, imgUrl(te.src)) +
           '<div><h3>' + esc(te.name) + '</h3><p class="st">' + esc(te.school || '') + ' · ' + totalOf(cells) + ' ' + t.votes +
           ' · ' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning +
+          ' · ' + Math.round(likingOf(cells) * 100) + '% ' + t.liked +
           (dunno ? ' · ✋ ' + t.dunnoCount(dunno) : '') + '</p></div></div>' +
           squareHtml(cells, t, { big: true, numbers: true, gray: state.gray }) +
           '<h4>' + t.days + '</h4><div id="sk-days"><p class="sk-note">…</p></div>' +
@@ -720,7 +729,7 @@
           var rgb = aggRGB(s.cells);
           return '<div class="sk-card" data-school="' + esc(s.id) + '" style="border-color:' + css(rgb) + '">' +
             '<p class="nm">' + esc(s.name) + '</p>' +
-            '<p class="sb">' + chip(rgb) + Math.round(learningOf(s.cells) * 100) + '% ' + t.learning + ' · ' + s.total + '</p>' +
+            '<p class="sb">' + chip(rgb) + Math.round(learningOf(s.cells) * 100) + '% ' + t.learning + ' · ' + Math.round(likingOf(s.cells) * 100) + '% ' + t.liked + '</p>' +
             gridHtml(s.cells, { mini: true, gray: state.gray }) + '</div>';
         }).join('') + '</div>';
     }
@@ -764,6 +773,7 @@
         '<div class="sk-head">' + avatarHtml(te.name, null) +
         '<div><h3>' + esc(te.name) + '</h3><p class="st">' + esc(te.subject[lang]) + ' · ' + totalOf(cells) + ' ' + t.votes +
         ' · ' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning +
+        ' · ' + Math.round(likingOf(cells) * 100) + '% ' + t.liked +
         (dunno ? ' · ✋ ' + t.dunnoCount(dunno) : '') + '</p></div></div>' +
         squareHtml(cells, t, { big: true, numbers: true, gray: state.gray }) +
         '<h4>' + t.patterns + '</h4>' +
@@ -791,7 +801,7 @@
       var rgb = aggRGB(cells);
       return '<p class="sk-lede">' + t.cumulativeLede + '</p>' +
         '<div class="sk-head"><div><h3>' + SCHOOL_NAME + '</h3><p class="st">' + totalOf(cells) + ' ' + t.votes +
-        ' · ' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning + '</p></div></div>' +
+        ' · ' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning + ' · ' + Math.round(likingOf(cells) * 100) + '% ' + t.liked + '</p></div></div>' +
         squareHtml(cells, t, { big: true, numbers: true, gray: state.gray });
     }
 
@@ -1089,7 +1099,7 @@
   var api = {
     mount: mount,
     guide: guide,
-    _math: { aggRGB: aggRGB, learningOf: learningOf, totalOf: totalOf, colSums: colSums, cellsFromVotes: cellsFromVotes, patterns: patterns, flipRows: flipRows },
+    _math: { aggRGB: aggRGB, learningOf: learningOf, likingOf: likingOf, totalOf: totalOf, colSums: colSums, cellsFromVotes: cellsFromVotes, patterns: patterns, flipRows: flipRows },
     _gen: { genSchool: genSchool, mulberry32: mulberry32 }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
