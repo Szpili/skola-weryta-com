@@ -929,9 +929,166 @@
     global.addEventListener('hashchange', function () { readHash(); render(); });
   }
 
+  /* ---------- GUIDE: the big annotated square + "be the student" ----------
+     Dan names the four corners and the target; the other 21 cells get their
+     meaning by composing the two axis steps, which is what the axes already
+     say — no meaning is attributed to him that he did not state. */
+  var G = {
+    en: {
+      title: 'How to use the square',
+      lead: 'You answer two questions with one tap. Nothing to type. No form.',
+      qy: 'How much did I learn?', qx: 'Did I like it?',
+      axisY: 'MORE LEARNED', axisX: 'LIKED IT MORE',
+      learn: ['nothing', 'very little', 'some', 'a lot', 'a whole lot'],
+      like: ['hated it', 'did not like it', 'did not mind', 'liked it', 'loved it'],
+      learnShort: ['nothing', 'very little', 'some', 'a lot', 'a lot!'],
+      likeShort: ['hate', 'dislike', 'so-so', 'like', 'love'],
+      pick: 'Tap any square to read what it means.',
+      cell: function (l, k) { return 'I learned <b>' + l + '</b> and I <b>' + k + '</b>.'; },
+      notes: {
+        '4,4': 'This is what every teacher wants. Dan calls it the target.',
+        '0,4': 'Learned a lot, but had a bad time. Dan: “I didn’t get along with the teacher, but I learned a lot.” Not all bad.',
+        '4,0': 'Had fun, learned nothing. Nice class, but something is missing.',
+        '0,0': 'The bad corner. Dan says this is where you look first, before a small problem grows into a big one.',
+        '2,2': 'The middle. “I showed up, I learned something.” An ordinary day.'
+      },
+      tryTitle: 'Try it — you are the student',
+      tryLead: 'Imagine you just left a class. One tap. That is the whole thing a pupil does.',
+      tryDone: function (l, k) { return 'You said: learned <b>' + l + '</b>, <b>' + k + '</b>. Your tap is now one dot in this teacher’s week — nobody sees your name, and one tap on its own means nothing. It counts when the same person keeps answering the same way.'; },
+      tryAgain: 'Tap again',
+      tryHand: '✋ I’m not keeping up',
+      tryHandDone: 'The teacher sees a raised hand — and does not see who raised it.'
+    },
+    pl: {
+      title: 'Jak używać kwadratu',
+      lead: 'Jednym kliknięciem odpowiadasz na dwa pytania. Nic nie piszesz. Żadnej ankiety.',
+      qy: 'Ile się nauczyłem?', qx: 'Czy mi się podobało?',
+      axisY: 'WIĘCEJ NAUKI', axisX: 'BARDZIEJ MI SIĘ PODOBAŁO',
+      learn: ['nic', 'bardzo mało', 'trochę', 'dużo', 'bardzo dużo'],
+      like: ['nie znosiłem', 'nie podobało mi się', 'było mi obojętnie', 'podobało mi się', 'bardzo mi się podobało'],
+      learnShort: ['nic', 'mało', 'trochę', 'dużo', 'dużo!'],
+      likeShort: ['nie znoszę', 'nie lubię', 'obojętnie', 'lubię', 'uwielbiam'],
+      pick: 'Kliknij dowolne pole, żeby przeczytać, co znaczy.',
+      cell: function (l, k) { return 'Nauczyłem się <b>' + l + '</b> i <b>' + k + '</b>.'; },
+      notes: {
+        '4,4': 'O to chodzi każdemu nauczycielowi. Dan nazywa to celem.',
+        '0,4': 'Dużo się nauczyłem, ale było mi ciężko. Dan: „nie dogadywałem się z nauczycielem, ale dużo się nauczyłem”. To nie jest zły wynik.',
+        '4,0': 'Było fajnie, ale nic z tego nie wyniosłem. Miłe zajęcia, tylko czegoś brakuje.',
+        '0,0': 'Zły róg. Dan mówi, że tu się patrzy pierwsze — zanim mały problem zrobi się duży.',
+        '2,2': 'Środek. „Byłem, czegoś się nauczyłem.” Zwykły dzień.'
+      },
+      tryTitle: 'Spróbuj — jesteś uczniem',
+      tryLead: 'Wyobraź sobie, że właśnie wyszedłeś z lekcji. Jedno kliknięcie. Tyle robi uczeń.',
+      tryDone: function (l, k) { return 'Powiedziałeś: nauczyłem się <b>' + l + '</b>, <b>' + k + '</b>. Twoje kliknięcie jest teraz jedną kropką w tygodniu tego nauczyciela — nikt nie widzi twojego imienia, a jedno kliknięcie samo w sobie nic nie znaczy. Liczy się, gdy ta sama osoba odpowiada tak wiele razy.'; },
+      tryAgain: 'Kliknij jeszcze raz',
+      tryHand: '✋ Nie nadążam',
+      tryHandDone: 'Nauczyciel widzi podniesioną rękę — i nie widzi, kto ją podniósł.'
+    }
+  };
+
+  var GCSS = '' +
+    '.skg{--gline:var(--line,#dce2e9);--gmut:var(--muted,#59646f)}' +
+    '.skg .skg-lead{color:var(--gmut);max-width:56ch;margin:0 0 18px;font-size:17px}' +
+    '.skg .skg-qs{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}' +
+    '.skg .skg-q{border:1px solid var(--gline);border-radius:999px;padding:7px 15px;font-size:15px;background:var(--card,#fff)}' +
+    '.skg .skg-q b{font-weight:700}' +
+    '.skg .skg-wrap{display:grid;grid-template-columns:26px 1fr;gap:8px;max-width:620px}' +
+    '.skg .skg-yax{position:relative;display:flex;align-items:center;justify-content:center}' +
+    '.skg .skg-yax span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.12em;color:var(--gmut)}' +
+    '.skg .skg-xax{grid-column:2;display:flex;align-items:center;justify-content:center;gap:8px;font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.12em;color:var(--gmut);margin-top:8px}' +
+    '.skg .skg-arrow{stroke:var(--gmut);fill:none;stroke-width:1.4}' +
+    '.skg .skg-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;aspect-ratio:1}' +
+    '.skg .skg-c{border:0;border-radius:5px;cursor:pointer;padding:4px 3px;font:inherit;color:#fff;' +
+      'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;line-height:1.15;min-width:0}' +
+    '.skg .skg-c em{font-style:normal;font-size:12px;font-weight:600;word-break:break-word}' +
+    '.skg .skg-c:hover,.skg .skg-c:focus-visible{outline:3px solid currentColor;outline-offset:-4px}' +
+    '.skg .skg-c[aria-pressed="true"]{outline:3px solid currentColor;outline-offset:-4px}' +
+    '.skg .skg-out{margin:16px 0 0;padding:14px 16px;border-left:3px solid var(--accent,#0e7a6b);' +
+      'background:var(--card,#fff);border-radius:0 10px 10px 0;font-size:16px;max-width:620px;min-height:3.4em}' +
+    '.skg .skg-out .skg-note{display:block;margin-top:7px;color:var(--gmut);font-size:14.5px}' +
+    '.skg .skg-try{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}' +
+    '.skg button.skg-btn{font:inherit;font-size:15px;padding:9px 16px;border-radius:9px;border:1px solid var(--gline);background:var(--card,#fff);color:inherit;cursor:pointer}' +
+    '.skg button.skg-btn:hover{border-color:var(--accent,#0e7a6b)}' +
+    '@media(max-width:520px){.skg .skg-c em{display:none}.skg .skg-c{min-height:52px}}';
+
+  function arrowSvg(vertical) {
+    return vertical
+      ? '<svg viewBox="0 0 12 90" width="12" height="90" aria-hidden="true"><path class="skg-arrow" d="M6 88 V6 M2.2 10 L6 3 L9.8 10"/></svg>'
+      : '<svg viewBox="0 0 90 12" width="90" height="12" aria-hidden="true"><path class="skg-arrow" d="M2 6 H84 M80 2.2 L87 6 L80 9.8"/></svg>';
+  }
+
+  /* Skola.guide(el, lang) — the explainer square, standalone from the data app */
+  function guide(el, lang) {
+    injectCss();
+    if (!document.getElementById('skg-css')) {
+      var st = document.createElement('style');
+      st.id = 'skg-css'; st.textContent = GCSS;
+      document.head.appendChild(st);
+    }
+    var g = G[lang === 'pl' ? 'pl' : 'en'];
+    var root = document.createElement('div');
+    root.className = 'skg';
+    el.appendChild(root);
+
+    var cells = '';
+    for (var gy = 4; gy >= 0; gy--) {
+      for (var gx = 0; gx < 5; gx++) {
+        var c = COL_RGB[gx];
+        /* darker toward the bottom so the vertical axis reads even in greyscale */
+        var shade = 0.42 + 0.58 * (gy / 4);
+        var r = Math.round(c[0] * shade), gg = Math.round(c[1] * shade), bb = Math.round(c[2] * shade);
+        /* text colour by perceived luminance — white on yellow is unreadable */
+        var lum = (0.299 * r + 0.587 * gg + 0.114 * bb) / 255;
+        var ink = lum > 0.55 ? '#0d1117' : '#ffffff';
+        var sh = lum > 0.55 ? 'none' : '0 1px 3px rgba(0,0,0,.85)';
+        cells += '<button type="button" class="skg-c" data-gx="' + gx + '" data-gy="' + gy + '"' +
+          ' aria-pressed="false" style="background:rgb(' + r + ',' + gg + ',' + bb + ');color:' + ink +
+          ';text-shadow:' + sh + '">' +
+          '<em>' + esc(g.learnShort[gy]) + '</em><em>' + esc(g.likeShort[gx]) + '</em></button>';
+      }
+    }
+
+    root.innerHTML =
+      '<p class="skg-lead">' + esc(g.lead) + '</p>' +
+      '<div class="skg-qs"><span class="skg-q">↕ ' + esc(g.qy) + '</span>' +
+      '<span class="skg-q">↔ ' + esc(g.qx) + '</span></div>' +
+      '<div class="skg-wrap">' +
+        '<div class="skg-yax">' + arrowSvg(true) + '<span>' + esc(g.axisY) + '</span></div>' +
+        '<div class="skg-grid">' + cells + '</div>' +
+        '<div class="skg-xax"><span>' + esc(g.axisX) + '</span>' + arrowSvg(false) + '</div>' +
+      '</div>' +
+      '<p class="skg-out" role="status">' + esc(g.pick) + '</p>' +
+      '<div class="skg-try">' +
+        '<button type="button" class="skg-btn" data-hand>' + esc(g.tryHand) + '</button>' +
+      '</div>';
+
+    var out = root.querySelector('.skg-out');
+    root.querySelectorAll('.skg-c').forEach(function (b) {
+      function show() {
+        root.querySelectorAll('.skg-c').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+        b.setAttribute('aria-pressed', 'true');
+        var gx = +b.getAttribute('data-gx'), gy = +b.getAttribute('data-gy');
+        var note = g.notes[gx + ',' + gy];
+        out.innerHTML = g.cell(esc(g.learn[gy]), esc(g.like[gx])) +
+          (note ? '<span class="skg-note">' + esc(note) + '</span>' : '') +
+          '<span class="skg-note">' + g.tryDone(esc(g.learn[gy]), esc(g.like[gx])) + '</span>';
+      }
+      b.addEventListener('click', show);
+      b.addEventListener('mouseenter', function () {
+        if (!root.querySelector('.skg-c[aria-pressed="true"]')) show();
+      });
+    });
+    var hand = root.querySelector('[data-hand]');
+    hand.addEventListener('click', function () {
+      out.innerHTML = esc(g.tryHandDone);
+      root.querySelectorAll('.skg-c').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+    });
+  }
+
   /* exports (browser + node self-check) */
   var api = {
     mount: mount,
+    guide: guide,
     _math: { aggRGB: aggRGB, learningOf: learningOf, totalOf: totalOf, colSums: colSums, cellsFromVotes: cellsFromVotes, patterns: patterns, flipRows: flipRows },
     _gen: { genSchool: genSchool, mulberry32: mulberry32 }
   };

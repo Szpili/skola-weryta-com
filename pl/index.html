@@ -46,15 +46,24 @@ a{color:var(--accent)}
 <div class="langsw"><a href="../">EN</a> · <a class="on" href="./">PL</a> &nbsp;|&nbsp; <a href="https://physix.weryta.pl/">← physix</a> · <a href="https://girltech.me/S">Skola Dana</a></div>
 <section class="hero">
   <p class="eyebrow">Skola — GirlTech USA × Weryta</p>
-  <h1>Ile się nauczyłeś <span class="light">i czy Ci się podobało?</span></h1>
-  <p class="lede">Jedna gwiazdka zlepia dwie różne rzeczy. Skola trzyma je osobno:
-  oś pionowa to <strong>nauka</strong>, pozioma to <strong>sympatia</strong> —
-  a pozioma jest kolorem, od czerwieni do błękitu, <strong>im chłodniej, tym lepiej</strong>.
-  Ocena to jedno kliknięcie; nauczyciel to <strong>strumień kliknięć w czasie</strong>, nigdy jedna średnia.
-  Ćwiartka, dla której to wszystko istnieje: <em>„nie dogadywałem się z nauczycielem, ale dużo się nauczyłem”.</em></p>
+  <h1>Dużo się nauczyłeś <span class="light">i czy Ci się podobało?</span></h1>
+  <p class="lede">Dwa pytania. Jedno kliknięcie. Tyle robi uczeń po lekcji.</p>
+  <p class="lede">Gwiazdki nie działają, bo jedna gwiazdka miesza dwie różne rzeczy.
+  Lekcja może być trudna i dobra jednocześnie. Może być miła i nic z niej nie wyniesiesz.
+  Dlatego Skola pyta o te dwie rzeczy osobno — <strong>ile się nauczyłeś</strong>
+  i <strong>czy Ci się podobało</strong>.</p>
 </section>
 <hr class="rule">
 <section class="wrap">
+  <h2>Jak używać kwadratu</h2>
+  <div id="skola-guide"></div>
+</section>
+<hr class="rule">
+<section class="wrap">
+  <h2>Co potem widzi nauczyciel i szkoła</h2>
+  <p class="lede" style="margin:0 0 18px">Każde kliknięcie to jeden mały kolorowy kwadracik.
+  Złóż całą klasę i masz obrazek, który czyta się w sekundę.
+  Poniżej prawdziwe dane z aplikacji Dana — prawdziwe uczelnie, prawdziwe głosy.</p>
   <div id="skola"></div>
 </section>
 <hr class="rule">
@@ -88,6 +97,9 @@ a{color:var(--accent)}
 </footer>
 <script src="../assets/skola-data.js"></script>
 <script src="../assets/skola.js"></script>
-<script>Skola.mount(document.getElementById('skola'), { lang: 'pl' });</script>
+<script>
+Skola.guide(document.getElementById('skola-guide'), 'pl');
+Skola.mount(document.getElementById('skola'), { lang: 'pl' });
+</script>
 </body>
 </html>

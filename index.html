@@ -46,15 +46,24 @@ a{color:var(--accent)}
 <div class="langsw"><a class="on" href="./">EN</a> · <a href="pl/">PL</a> &nbsp;|&nbsp; <a href="https://physix.weryta.com/">← physix</a> · <a href="https://girltech.me/S">Dan’s Skola</a></div>
 <section class="hero">
   <p class="eyebrow">Skola — GirlTech USA × Weryta</p>
-  <h1>How much did you learn, <span class="light">and did you like it?</span></h1>
-  <p class="lede">One star conflates two different things. Skola keeps them apart:
-  the vertical axis is <strong>learning</strong>, the horizontal is <strong>liking</strong> —
-  and the horizontal is color, from red to blue, <strong>the cooler the better</strong>.
-  A rating is one tap; a teacher is a <strong>stream of taps over days</strong>, never a single average.
-  The quadrant this exists for: <em>“I didn’t get along with the teacher, but I learned a lot.”</em></p>
+  <h1>Did you learn much, <span class="light">and did you like it?</span></h1>
+  <p class="lede">Two questions. One tap. That is all a pupil does after a class.</p>
+  <p class="lede">Stars do not work, because one star mixes up two different things.
+  A class can be hard and still be good. A class can be fun and teach you nothing.
+  So Skola asks the two things separately — <strong>how much you learned</strong>,
+  and <strong>whether you liked it</strong>.</p>
 </section>
 <hr class="rule">
 <section class="wrap">
+  <h2>How to use the square</h2>
+  <div id="skola-guide"></div>
+</section>
+<hr class="rule">
+<section class="wrap">
+  <h2>What the teacher and the school then see</h2>
+  <p class="lede" style="margin:0 0 18px">Every tap becomes one small coloured square.
+  Put a whole class together and you get a picture you can read in a second.
+  Below is real data from Dan's Skola — real colleges, real votes.</p>
   <div id="skola"></div>
 </section>
 <hr class="rule">
@@ -88,6 +97,9 @@ a{color:var(--accent)}
 </footer>
 <script src="assets/skola-data.js"></script>
 <script src="assets/skola.js"></script>
-<script>Skola.mount(document.getElementById('skola'), { lang: 'en' });</script>
+<script>
+Skola.guide(document.getElementById('skola-guide'), 'en');
+Skola.mount(document.getElementById('skola'), { lang: 'en' });
+</script>
 </body>
 </html>
