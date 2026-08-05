@@ -51,17 +51,19 @@
       admit: 'not all bad', admitSub: '“I didn’t get along with the teacher, but I learned a lot”',
       fun: 'fun, no progress', funSub: 'great time, learned nothing — a different problem',
       legendTitle: 'How to read the square',
-      schoolsLede: 'One card per institution. The colour and the number are its teachers’ answers rolled up — Skola has no separate vote on a school as such.',
+      schoolsLede: 'One card per institution. The colour and the number are its teachers’ answers rolled up. A school can also be rated directly, and where that exists it is shown separately below.',
       teachersLede: 'Tiles, not overlapping logos — each teacher: photo, overall color, vote map.',
       teacherCount: function (n) { return n + ' teachers'; },
       cumulativeLede: 'All votes in the school, one square. “You get a cumulative for the school, and each teacher gets a breakdown.”',
       compareLede: 'Side by side, most learning first. This is only one of the two axes — the colour still carries whether people liked it, so a high place here is not a total score.',
       learning: 'learned', liked: 'liked it',
+      ownTitle: 'The institution itself',
+      ownSub: function (n) { return n + ' answers about the school as a whole — separate from its teachers, and not included in the number above'; },
       tooFewTitle: 'Not enough answers to compare yet',
       tooFew: function (n) { return n + ' answers so far — too few for a percentage'; },
       notRated: 'not rated yet',
       studentVotes: function (n) { return n + ' answers'; },
-      dataNote: 'University data comes live from Dan’s Skola at girltech.me/S — the same model rendered by our code. A school’s figure is its teachers’ answers from the last 12 months (one photo per teacher), not a separate vote on the school itself. School (K-8) data is synthetic.',
+      dataNote: 'University data comes live from Dan’s Skola at girltech.me/S — the same model rendered by our code. The card figure is its teachers’ answers from the last 12 months (one photo per teacher); answers about the institution itself are counted separately, as Dan’s own reports do. School (K-8) data is synthetic.',
       dataNoteSnap: 'The live API was unreachable, so university data here is our bundled snapshot of Dan’s Skola (girltech.me/S) taken 2026-07-29 — not today’s votes. School data is synthetic.',
       dataNotePart: 'Some university data could not be fetched live and falls back to our 2026-07-29 snapshot of girltech.me/S. School data is synthetic.',
       loadFail: 'This record could not be displayed — the data from girltech.me/S was incomplete.',
@@ -91,17 +93,19 @@
       admit: 'nie takie złe', admitSub: '„nie dogadywałem się z nauczycielem, ale dużo się nauczyłem”',
       fun: 'zabawa bez postępu', funSub: 'świetny czas, zero nauki — inny problem',
       legendTitle: 'Jak czytać kwadrat',
-      schoolsLede: 'Jedna karta na instytucję. Kolor i liczba to zsumowane odpowiedzi jej wykładowców — Skola nie ma osobnego głosu na samą uczelnię.',
+      schoolsLede: 'Jedna karta na instytucję. Kolor i liczba to zsumowane odpowiedzi jej wykładowców. Samą uczelnię też można ocenić — jeśli takie odpowiedzi są, pokazujemy je osobno niżej.',
       teachersLede: 'Kafelki zamiast nakładających się logotypów — nauczyciel: zdjęcie, kolor zbiorczy, mapa głosów.',
       teacherCount: function (n) { return n + ' nauczycieli'; },
       cumulativeLede: 'Wszystkie głosy szkoły w jednym kwadracie. „Szkoła dostaje wynik zbiorczy, a każdy nauczyciel rozkład tego, jak sobie radzi w klasie.”',
       compareLede: 'Obok siebie, najpierw najwięcej nauki. To tylko jedna z dwóch osi — kolor wciąż mówi, czy się podobało, więc wysokie miejsce tutaj to nie ocena ogólna.',
       learning: 'nauki', liked: 'sympatii',
+      ownTitle: 'Sama instytucja',
+      ownSub: function (n) { return n + ' odpowiedzi o szkole jako całości — osobno od jej wykładowców i nie wliczone w liczbę wyżej'; },
       tooFewTitle: 'Za mało odpowiedzi, żeby porównywać',
       tooFew: function (n) { return 'na razie ' + n + ' odpowiedzi — za mało na procent'; },
       notRated: 'jeszcze nieoceniona',
       studentVotes: function (n) { return n + ' odpowiedzi'; },
-      dataNote: 'Dane uczelni płyną na żywo z aplikacji Dana (girltech.me/S) — ten sam model, nasz rendering. Wynik uczelni to odpowiedzi jej wykładowców z ostatnich 12 miesięcy (po jednym zdjęciu na osobę), a nie osobny głos na samą uczelnię. Dane szkolne (K-8) są syntetyczne.',
+      dataNote: 'Dane uczelni płyną na żywo z aplikacji Dana (girltech.me/S) — ten sam model, nasz rendering. Liczba na karcie to odpowiedzi jej wykładowców z ostatnich 12 miesięcy (po jednym zdjęciu na osobę); odpowiedzi o samej instytucji liczymy osobno, tak jak jego własne raporty. Dane szkolne (K-8) są syntetyczne.',
       dataNoteSnap: 'API było niedostępne, więc dane uczelni pochodzą z naszej migawki aplikacji Dana (girltech.me/S) z 29.07.2026 — to nie są dzisiejsze głosy. Dane szkolne są syntetyczne.',
       dataNotePart: 'Części danych uczelni nie udało się pobrać na żywo — w tym miejscu pochodzą z migawki girltech.me/S z 29.07.2026. Dane szkolne są syntetyczne.',
       loadFail: 'Nie udało się wyświetlić tego rekordu — dane z girltech.me/S były niekompletne.',
@@ -439,7 +443,7 @@
     var lang = opts.lang === 'pl' ? 'pl' : 'en';
     var today = ymd(new Date());
     var school = genSchool(today);
-    var dan = { source: null, schools: [], teachers: {}, years: {} };
+    var dan = { source: null, schools: [], teachers: {}, years: {}, own: {} };
     var state = { mode: 'uni', view: 'schools', sid: null, tid: null, day: null, gray: false };
 
     /* hash <-> state, so a view can be sent as a link ('-' = empty slot) */
@@ -472,6 +476,35 @@
           dan.source = 'snapshot';
         });
     }
+    /* A school can be rated directly: pictures with teacher_id NULL ("School
+       logo"). Dan's aggregates deliberately exclude them (Saudit/schoolreport
+       filter teacher_id IS NOT NULL), so we show them as their OWN figure
+       rather than folding them into the teacher roll-up.
+       ponytail: ids hardcoded — his API exposes no "school's own picture" feed.
+       Ask Dan for one line: SELECT id FROM pictures WHERE school_id=? AND
+       teacher_id IS NULL, and this map goes away. Verified live 2026-08-05. */
+    var SCHOOL_PIC = { 6: 32, 28: 54, 31: 57, 35: 66, 36: 72 };
+
+    function danSchoolOwn(sid) {
+      var pic = SCHOOL_PIC[sid];
+      if (!pic) return Promise.resolve(null);
+      if (dan.own[sid] !== undefined) return Promise.resolve(dan.own[sid]);
+      return fetch(API + '?action=votes&picture_id=' + pic + '&from=2000-01-01&to=2030-12-31&_=' + Date.now())
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (!j.ok || !j.votes || !j.votes.length) { dan.own[sid] = null; return null; }
+          var X = ['-2', '-1', '0', '1', '2'], Y = ['0', '0.25', '0.5', '0.75', '1'];
+          var c = emptyCells();
+          j.votes.forEach(function (v) {
+            var gx = X.indexOf(String(v.x_value)), gy = Y.indexOf(String(v.y_value));
+            if (gx >= 0 && gy >= 0) c[gy][gx]++;
+          });
+          dan.own[sid] = flipRows(c);      /* same polarity fix as every other feed */
+          return dan.own[sid];
+        })
+        .catch(function () { dan.own[sid] = null; return null; });
+    }
+
     function danTeachers(sid) {
       if (dan.teachers[sid]) return Promise.resolve(dan.teachers[sid]);
       return fetch(API + '?action=ansible&school_id=' + sid + '&_=' + Date.now())
@@ -539,7 +572,7 @@
       }
       root.innerHTML = h + legendHtml() + '<p class="sk-note" style="margin-top:26px">' + dataNote() + '</p>';
       bindTop();
-      if (state.mode === 'uni' && state.view === 'teachers' && state.sid) fillUniTeachers();
+      if (state.mode === 'uni' && state.view === 'teachers' && state.sid) { fillUniTeachers(); fillSchoolOwn(state.sid, gen); }
       if (state.mode === 'uni' && state.view === 'teacher' && state.tid) fillUniTeacher();
       bindCommon();
     }
@@ -585,6 +618,22 @@
         }).join('') + '</div>';
     }
 
+    /* the school's own rating, rendered beneath its header */
+    function fillSchoolOwn(sid, mine) {
+      danSchoolOwn(sid).then(function (cells) {
+        if (mine !== gen || !cells) return;
+        var host = root.querySelector('#sk-own');
+        if (!host) return;
+        var rgb = aggRGB(cells), n = totalOf(cells);
+        host.innerHTML = '<h4>' + t.ownTitle + '</h4>' +
+          '<div class="sk-head"><div style="max-width:120px">' +
+          gridHtml(cells, { gray: state.gray }) + '</div>' +
+          '<div><p class="st">' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning +
+          ' · ' + Math.round(likingOf(cells) * 100) + '% ' + t.liked + '</p>' +
+          '<p class="sk-note" style="margin:4px 0 0;max-width:46ch">' + esc(t.ownSub(n)) + '</p></div></div>';
+      });
+    }
+
     function fillUniTeachers() {
       var mine = gen;
       danTeachers(state.sid).then(function (list) {
@@ -617,6 +666,7 @@
       return '<p class="sk-back"><button data-back>' + t.back + '</button></p>' +
         (s ? '<div class="sk-head">' + avatarHtml(s.name, s.has_logo ? imgUrl(s.logo) : null) +
           '<div><h3>' + esc(s.name) + '</h3><p class="st">' + s.total + ' ' + t.votes + '</p></div></div>' : '') +
+        '<div id="sk-own"></div>' +
         '<div id="sk-async"><p class="sk-note">…</p></div>';
     }
 
