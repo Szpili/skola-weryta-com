@@ -33,7 +33,7 @@
       tabs: { schools: 'Schools', compare: 'Compare', cumulative: 'Whole school' },
       axisY: ['learned nothing', 'learned a lot'], axisX: ['hated it', 'loved it'],
       live: 'live data from girltech.me/S', snapshot: 'snapshot of girltech.me/S (live API unreachable)',
-      synth: 'synthetic demo data', votes: 'votes', back: '← back',
+      synth: 'synthetic demo data', votes: 'answers', back: '← back',
       rateHere: 'Rate: one tap on the grid', rateHint: 'Up = I learned more. Right = I liked it more. You may also not tap at all — no tap, no record, and that is a fine answer too.',
       dunno: 'I’m not keeping up', dunnoDone: 'noted — the teacher sees a hand you didn’t have to raise',
       dunnoCount: function (n) { return n + '× “I’m not keeping up” today'; },
@@ -57,8 +57,11 @@
       cumulativeLede: 'All votes in the school, one square. “You get a cumulative for the school, and each teacher gets a breakdown.”',
       compareLede: 'Side by side, most learning first. This is only one of the two axes — the colour still carries whether people liked it, so a high place here is not a total score.',
       learning: 'learned', liked: 'liked it',
+      tooFewTitle: 'Not enough answers to compare yet',
+      tooFew: function (n) { return n + ' answers so far — too few for a percentage'; },
+      notRated: 'not rated yet',
       studentVotes: function (n) { return n + ' answers'; },
-      dataNote: 'University data comes live from Dan’s Skola at girltech.me/S — the same model rendered by our code. School data is synthetic.',
+      dataNote: 'University data comes live from Dan’s Skola at girltech.me/S — the same model rendered by our code. A school’s figure is its teachers’ answers from the last 12 months (one photo per teacher), not a separate vote on the school itself. School (K-8) data is synthetic.',
       dataNoteSnap: 'The live API was unreachable, so university data here is our bundled snapshot of Dan’s Skola (girltech.me/S) taken 2026-07-29 — not today’s votes. School data is synthetic.',
       dataNotePart: 'Some university data could not be fetched live and falls back to our 2026-07-29 snapshot of girltech.me/S. School data is synthetic.',
       loadFail: 'This record could not be displayed — the data from girltech.me/S was incomplete.',
@@ -70,7 +73,7 @@
       tabs: { schools: 'Szkoły', compare: 'Porównaj', cumulative: 'Cała szkoła' },
       axisY: ['nic się nie nauczyłem', 'dużo się nauczyłem'], axisX: ['nie znosiłem', 'uwielbiałem'],
       live: 'dane na żywo z girltech.me/S', snapshot: 'migawka girltech.me/S (API niedostępne)',
-      synth: 'dane syntetyczne (demo)', votes: 'głosów', back: '← wróć',
+      synth: 'dane syntetyczne (demo)', votes: 'odpowiedzi', back: '← wróć',
       rateHere: 'Oceń: jedno kliknięcie w kwadrat', rateHint: 'Wyżej = więcej się nauczyłem. W prawo = bardziej mi się podobało. Możesz też nie klikać wcale — brak kliknięcia to brak rekordu i to też jest w porządku.',
       dunno: 'Nie nadążam', dunnoDone: 'zapisane — nauczyciel widzi rękę, której nie musiałeś podnosić',
       dunnoCount: function (n) { return n + '× „nie nadążam” dzisiaj'; },
@@ -94,8 +97,11 @@
       cumulativeLede: 'Wszystkie głosy szkoły w jednym kwadracie. „Szkoła dostaje wynik zbiorczy, a każdy nauczyciel rozkład tego, jak sobie radzi w klasie.”',
       compareLede: 'Obok siebie, najpierw najwięcej nauki. To tylko jedna z dwóch osi — kolor wciąż mówi, czy się podobało, więc wysokie miejsce tutaj to nie ocena ogólna.',
       learning: 'nauki', liked: 'sympatii',
+      tooFewTitle: 'Za mało odpowiedzi, żeby porównywać',
+      tooFew: function (n) { return 'na razie ' + n + ' odpowiedzi — za mało na procent'; },
+      notRated: 'jeszcze nieoceniona',
       studentVotes: function (n) { return n + ' odpowiedzi'; },
-      dataNote: 'Dane uczelni płyną na żywo z aplikacji Dana (girltech.me/S) — ten sam model, nasz rendering. Dane szkolne są syntetyczne.',
+      dataNote: 'Dane uczelni płyną na żywo z aplikacji Dana (girltech.me/S) — ten sam model, nasz rendering. Wynik uczelni to odpowiedzi jej wykładowców z ostatnich 12 miesięcy (po jednym zdjęciu na osobę), a nie osobny głos na samą uczelnię. Dane szkolne (K-8) są syntetyczne.',
       dataNoteSnap: 'API było niedostępne, więc dane uczelni pochodzą z naszej migawki aplikacji Dana (girltech.me/S) z 29.07.2026 — to nie są dzisiejsze głosy. Dane szkolne są syntetyczne.',
       dataNotePart: 'Części danych uczelni nie udało się pobrać na żywo — w tym miejscu pochodzą z migawki girltech.me/S z 29.07.2026. Dane szkolne są syntetyczne.',
       loadFail: 'Nie udało się wyświetlić tego rekordu — dane z girltech.me/S były niekompletne.',
@@ -572,7 +578,9 @@
           var rgb = aggRGB(s.cells);
           return '<div class="sk-card" data-school="' + esc(s.id) + '" style="border-color:' + css(rgb) + '">' +
             avatarHtml(s.name, s.has_logo ? imgUrl(s.logo) : null) +
-            '<p class="nm">' + esc(s.name) + '</p><p class="sb">' + s.total + ' ' + t.votes + '</p>' +
+            '<p class="nm">' + esc(s.name) + '</p><p class="sb">' +
+            (s.state ? esc(s.state) + ' · ' : '') +
+            (totalOf(s.cells) ? totalOf(s.cells) + ' ' + t.votes : t.notRated) + '</p>' +
             gridHtml(s.cells, { mini: true, gray: state.gray }) + '</div>';
         }).join('') + '</div>';
     }
@@ -722,16 +730,34 @@
       });
     }
 
+    /* A percentage off a handful of taps is noise, and this page names real
+       institutions. Below the threshold we show no percentage and no rank —
+       UNLV on 5 taps was topping the table above MaineTech on 248.
+       ponytail: fixed threshold; per USTALENIA the school admin is supposed to
+       decide how many answers make a result, so this becomes a setting later. */
+    var MIN_RATED = 30;
+
     function uniCompare() {
-      var sorted = dan.schools.slice().sort(function (a, b) { return learningOf(b.cells) - learningOf(a.cells); });
+      var enough = [], thin = [];
+      dan.schools.forEach(function (s) { (totalOf(s.cells) >= MIN_RATED ? enough : thin).push(s); });
+      enough.sort(function (a, b) { return learningOf(b.cells) - learningOf(a.cells); });
+      thin.sort(function (a, b) { return totalOf(b.cells) - totalOf(a.cells); });
+      function card(s, rank) {
+        var rgb = aggRGB(s.cells), n = totalOf(s.cells);
+        var sub = rank
+          ? chip(rgb) + Math.round(learningOf(s.cells) * 100) + '% ' + t.learning +
+            ' · ' + Math.round(likingOf(s.cells) * 100) + '% ' + t.liked
+          : '<span style="opacity:.8">' + (n ? t.tooFew(n) : t.notRated) + '</span>';
+        return '<div class="sk-card" data-school="' + esc(s.id) + '" style="border-color:' + css(rgb) + '">' +
+          '<p class="nm">' + esc(s.name) + '</p>' +
+          (s.state ? '<p class="sb" style="margin:0 0 4px">' + esc(s.state) + '</p>' : '') +
+          '<p class="sb">' + sub + '</p>' +
+          gridHtml(s.cells, { mini: true, gray: state.gray }) + '</div>';
+      }
       return '<p class="sk-lede">' + t.compareLede + '</p><div class="sk-cmp">' +
-        sorted.map(function (s) {
-          var rgb = aggRGB(s.cells);
-          return '<div class="sk-card" data-school="' + esc(s.id) + '" style="border-color:' + css(rgb) + '">' +
-            '<p class="nm">' + esc(s.name) + '</p>' +
-            '<p class="sb">' + chip(rgb) + Math.round(learningOf(s.cells) * 100) + '% ' + t.learning + ' · ' + Math.round(likingOf(s.cells) * 100) + '% ' + t.liked + '</p>' +
-            gridHtml(s.cells, { mini: true, gray: state.gray }) + '</div>';
-        }).join('') + '</div>';
+        enough.map(function (s) { return card(s, true); }).join('') + '</div>' +
+        (thin.length ? '<h4>' + t.tooFewTitle + '</h4><div class="sk-cmp">' +
+          thin.map(function (s) { return card(s, false); }).join('') + '</div>' : '');
     }
 
     /* school mode */
