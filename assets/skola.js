@@ -30,6 +30,7 @@
     en: {
       modes: { uni: 'University', school: 'School (K-8)' },
       gray: 'pressure map', grayTitle: 'Grayscale intensity — works without color vision',
+      coins: 'coins', coinsTitle: 'One coin per answer — they shrink as answers pile up, so you see the spread; the number gives the exact count',
       tabs: { schools: 'Schools', compare: 'Compare', cumulative: 'Whole school' },
       axisY: ['learned nothing', 'learned a lot'], axisX: ['hated it', 'loved it'],
       live: 'live data from girltech.me/S', snapshot: 'snapshot of girltech.me/S (live API unreachable)',
@@ -72,6 +73,7 @@
     pl: {
       modes: { uni: 'Uczelnia', school: 'Szkoła (K-8)' },
       gray: 'mapa nacisku', grayTitle: 'Skala szarości — działa bez rozróżniania kolorów',
+      coins: 'żetony', coinsTitle: 'Jeden żeton na odpowiedź — maleją, gdy odpowiedzi przybywa, więc widać rozkład; liczba podaje dokładną wartość',
       tabs: { schools: 'Szkoły', compare: 'Porównaj', cumulative: 'Cała szkoła' },
       axisY: ['nic się nie nauczyłem', 'dużo się nauczyłem'], axisX: ['nie znosiłem', 'uwielbiałem'],
       live: 'dane na żywo z girltech.me/S', snapshot: 'migawka girltech.me/S (API niedostępne)',
@@ -347,6 +349,14 @@
     '.sk .sk-grid .c{border-radius:2px;background:rgba(128,140,155,.16);position:relative}' +
     '.sk .sk-grid.big .c{border-radius:4px}' +
     '.sk .sk-grid .c span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:11px;color:#fff;text-shadow:0 0 4px rgba(0,0,0,.9)}' +
+    /* coins: one disc per answer, packed square-ish so they shrink as votes pile up */
+    '.sk .sk-grid.coins .c{background:rgba(130,140,155,.10);padding:7%;overflow:hidden}' +
+    '.sk .sk-coins{display:flex;flex-wrap:wrap;gap:5%;width:100%;height:100%;align-content:center;justify-content:center}' +
+    '.sk .sk-coins i{flex:0 0 auto;width:calc((100% - (var(--k) - 1) * 5%) / var(--k));aspect-ratio:1;border-radius:50%;min-width:3px}' +
+    /* the count sits in the corner on a plate so it stays readable over the discs */
+    '.sk .sk-grid.coins .c span{inset:auto 4% 3% auto;font-size:11.5px;font-weight:700;color:var(--ink,#141a20);'
+      + 'background:var(--paper,#eceff3);border-radius:5px;padding:0 4px;text-shadow:none;line-height:1.5;box-shadow:0 0 0 1px rgba(128,140,155,.35)}' +
+    '.sk .sk-grid.coins.big .c span{font-size:13px}' +
     '.sk .sk-grid.input .c{cursor:pointer}' +
     '.sk .sk-grid.input .c:hover{outline:2px solid var(--accent,#0e7a6b);outline-offset:-1px}' +
     '.sk .sk-mini{width:100%;max-width:120px;margin:0 auto}' +
@@ -395,11 +405,28 @@
   }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]; }); }
 
+  /* One coin per answer. More answers in a cell -> the coins shrink to fit, so
+     the spread is readable at a glance (Dan's physed.html "coins" view). The
+     count is printed as well: the coins give the shape, the number gives the
+     figure — shrinking discs alone cannot be counted past about a dozen. */
+  function coinsCell(gx, n, gray) {
+    if (!n) return '';
+    var k = Math.ceil(Math.sqrt(n));                 /* square-ish packing */
+    var c = COL_RGB[gx];
+    var col = gray ? 'rgba(150,158,170,.95)' : 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+    var dots = '';
+    for (var i = 0; i < n; i++) dots += '<i style="background:' + col + '"></i>';
+    /* --k drives the coin width in CSS. Flex, not grid: 1fr tracks collapse to
+       min-content under place-content:center, which shrank every coin to 2px. */
+    return '<span class="sk-coins" style="--k:' + k + '">' + dots + '</span>';
+  }
+
   function gridHtml(cells, opts) {
     opts = opts || {};
     var max = 0, gy, gx;
     for (gy = 0; gy < 5; gy++) for (gx = 0; gx < 5; gx++) if (cells[gy][gx] > max) max = cells[gy][gx];
-    var h = '<div class="sk-grid' + (opts.big ? ' big' : '') + (opts.input ? ' input' : '') + (opts.mini ? ' sk-mini' : '') + '">';
+    var h = '<div class="sk-grid' + (opts.big ? ' big' : '') + (opts.input ? ' input' : '') +
+      (opts.mini ? ' sk-mini' : '') + (opts.coins ? ' coins' : '') + '">';
     for (gy = 4; gy >= 0; gy--) for (gx = 0; gx < 5; gx++) {
       var n = cells[gy][gx];
       /* grey is for READING results ("a pressure map if you don't have the
@@ -407,9 +434,10 @@
          the liking axis, and Dan's own voting grid has no grey branch */
       var col = opts.input
         ? 'rgba(' + COL_RGB[gx][0] + ',' + COL_RGB[gx][1] + ',' + COL_RGB[gx][2] + ',.5)'
-        : cellColor(gx, n, max, opts.gray);
+        : opts.coins ? null : cellColor(gx, n, max, opts.gray);
       h += '<div class="c" data-gx="' + gx + '" data-gy="' + gy + '"' + (col ? ' style="background:' + col + '"' : '') + '>' +
-        (opts.numbers && n ? '<span>' + n + '</span>' : '') + '</div>';
+        (opts.coins ? coinsCell(gx, n, opts.gray) : '') +
+        ((opts.numbers || opts.coins) && n ? '<span>' + n + '</span>' : '') + '</div>';
     }
     return h + '</div>';
   }
@@ -444,7 +472,7 @@
     var today = ymd(new Date());
     var school = genSchool(today);
     var dan = { source: null, schools: [], teachers: {}, years: {}, own: {} };
-    var state = { mode: 'uni', view: 'schools', sid: null, tid: null, day: null, gray: false };
+    var state = { mode: 'uni', view: 'schools', sid: null, tid: null, day: null, gray: false, coins: false };
 
     /* hash <-> state, so a view can be sent as a link ('-' = empty slot) */
     function readHash() {
@@ -598,6 +626,7 @@
         tabs.map(function (x) {
           return '<button data-tab="' + x[0] + '" class="' + (state.view === x[0] ? 'on' : '') + '">' + x[1] + '</button>';
         }).join('') +
+        '<button class="sk-gray' + (state.coins ? ' on' : '') + '" data-coins title="' + t.coinsTitle + '">' + t.coins + '</button>' +
         '<button class="sk-gray' + (state.gray ? ' on' : '') + '" data-gray title="' + t.grayTitle + '">' + t.gray + '</button>' +
         '</div></div><p class="sk-src">' + srcLabel + '</p>';
     }
@@ -614,7 +643,7 @@
             '<p class="nm">' + esc(s.name) + '</p><p class="sb">' +
             (s.state ? esc(s.state) + ' · ' : '') +
             (totalOf(s.cells) ? totalOf(s.cells) + ' ' + t.votes : t.notRated) + '</p>' +
-            gridHtml(s.cells, { mini: true, gray: state.gray }) + '</div>';
+            gridHtml(s.cells, { mini: true, gray: state.gray, coins: state.coins }) + '</div>';
         }).join('') + '</div>';
     }
 
@@ -647,7 +676,7 @@
             return '<div class="sk-card" data-teacher="' + esc(te.id) + '" style="border-color:' + css(rgb) + '">' +
               avatarHtml(te.name, imgUrl(te.src)) +
               '<p class="nm">' + esc(te.name) + '</p><p class="sb">' + totalOf(cells) + ' ' + t.votes + '</p>' +
-              gridHtml(cells, { mini: true, gray: state.gray }) + '</div>';
+              gridHtml(cells, { mini: true, gray: state.gray, coins: state.coins }) + '</div>';
           }).join('') + '</div>';
         bindCommon();
       }).catch(function (e) {
@@ -691,7 +720,7 @@
           ' · ' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning +
           ' · ' + Math.round(likingOf(cells) * 100) + '% ' + t.liked +
           (dunno ? ' · ✋ ' + t.dunnoCount(dunno) : '') + '</p></div></div>' +
-          squareHtml(cells, t, { big: true, numbers: true, gray: state.gray }) +
+          squareHtml(cells, t, { big: true, numbers: true, gray: state.gray, coins: state.coins }) +
           '<h4>' + t.days + '</h4><div id="sk-days"><p class="sk-note">…</p></div>' +
           '<h4>' + t.calendar + '</h4><div id="sk-cal"><p class="sk-note">…</p></div>' +
           rateHtml('dan:' + te.id) + rmpHtml();
@@ -802,7 +831,7 @@
           '<p class="nm">' + esc(s.name) + '</p>' +
           (s.state ? '<p class="sb" style="margin:0 0 4px">' + esc(s.state) + '</p>' : '') +
           '<p class="sb">' + sub + '</p>' +
-          gridHtml(s.cells, { mini: true, gray: state.gray }) + '</div>';
+          gridHtml(s.cells, { mini: true, gray: state.gray, coins: state.coins }) + '</div>';
       }
       return '<p class="sk-lede">' + t.compareLede + '</p><div class="sk-cmp">' +
         enough.map(function (s) { return card(s, true); }).join('') + '</div>' +
@@ -819,7 +848,7 @@
           return '<div class="sk-card" data-steacher="' + te.id + '" style="border-color:' + css(rgb) + '">' +
             avatarHtml(te.name, null) +
             '<p class="nm">' + esc(te.name) + '</p><p class="sb">' + esc(te.subject[lang]) + ' · ' + totalOf(cells) + ' ' + t.votes + '</p>' +
-            gridHtml(cells, { mini: true, gray: state.gray }) + '</div>';
+            gridHtml(cells, { mini: true, gray: state.gray, coins: state.coins }) + '</div>';
         }).join('') + '</div>';
     }
 
@@ -851,7 +880,7 @@
         ' · ' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning +
         ' · ' + Math.round(likingOf(cells) * 100) + '% ' + t.liked +
         (dunno ? ' · ✋ ' + t.dunnoCount(dunno) : '') + '</p></div></div>' +
-        squareHtml(cells, t, { big: true, numbers: true, gray: state.gray }) +
+        squareHtml(cells, t, { big: true, numbers: true, gray: state.gray, coins: state.coins }) +
         '<h4>' + t.patterns + '</h4>' +
         (pats.length ? pats.map(function (p) { return '<div class="sk-alert">' + esc(p) + '</div>'; }).join('')
           : '<div class="sk-alert sk-ok">' + t.patNone + '</div>') +
@@ -878,7 +907,7 @@
       return '<p class="sk-lede">' + t.cumulativeLede + '</p>' +
         '<div class="sk-head"><div><h3>' + SCHOOL_NAME + '</h3><p class="st">' + totalOf(cells) + ' ' + t.votes +
         ' · ' + chip(rgb) + Math.round(learningOf(cells) * 100) + '% ' + t.learning + ' · ' + Math.round(likingOf(cells) * 100) + '% ' + t.liked + '</p></div></div>' +
-        squareHtml(cells, t, { big: true, numbers: true, gray: state.gray });
+        squareHtml(cells, t, { big: true, numbers: true, gray: state.gray, coins: state.coins });
     }
 
     /* rating input */
@@ -975,6 +1004,8 @@
       });
       var g = root.querySelector('[data-gray]');
       if (g) g.addEventListener('click', function () { state.gray = !state.gray; render(); });
+      var cn = root.querySelector('[data-coins]');
+      if (cn) cn.addEventListener('click', function () { state.coins = !state.coins; render(); });
     }
     function bindCommon() {
       root.querySelectorAll('[data-school]').forEach(function (c) {
