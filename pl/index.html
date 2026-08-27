@@ -2,108 +2,87 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Skola — ocena nauczyciela na dwóch osiach: ile się nauczyłem i jak bardzo mi się podobało. Jedno kliknięcie. Ten sam model co Fairy Dice Weryty, w drugiej domenie.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Skola — ocena zajęć na dwóch osiach: ile się nauczyłem i czy mi się podobało. Jedno stuknięcie. Dla szkół i uczelni w Polsce.">
+<meta property="og:title" content="Skola — dwie osie zamiast jednej gwiazdki">
+<meta property="og:description" content="Ocena zajęć na dwóch osiach: ile się nauczyłem i czy mi się podobało. Jedno stuknięcie.">
+<meta property="og:image" content="https://szpili.github.io/skola-pl/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://skola.weryta.com/pl/">
-<link rel="alternate" hreflang="en" href="https://skola.weryta.com/">
 <link rel="alternate" hreflang="pl" href="https://skola.weryta.com/pl/">
-<link rel="alternate" hreflang="x-default" href="https://skola.weryta.com/">
-<title>Skola — ocena nauczycieli na dwóch osiach, jedno kliknięcie</title>
-<style>
-:root{
-  --paper:#eceff3; --card:#ffffff; --ink:#141a20; --muted:#59646f;
-  --line:#dce2e9; --accent:#0e7a6b; --accent-ink:#0b5f54;
-  --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
-  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,sans-serif;
-  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,monospace;
-}
-@media (prefers-color-scheme:dark){:root{
-  --paper:#0d1217; --card:#151c23; --ink:#e7edf3; --muted:#94a2b0;
-  --line:#232d38; --accent:#39b7a2; --accent-ink:#5fcdb9;
-}}
-*{box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
-.wrap{max-width:960px;margin:0 auto;padding:0 24px}
-.rule{max-width:960px;margin:28px auto;border:0;border-top:1px solid var(--line)}
-.langsw{max-width:960px;margin:0 auto;padding:20px 24px 0;font-family:var(--mono);font-size:12.5px;text-align:right}
-.langsw a{color:var(--muted);text-decoration:none}.langsw a.on{color:var(--ink);font-weight:700}.langsw a:hover{color:var(--accent)}
-.hero{padding:56px 24px 8px;max-width:960px;margin:0 auto}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--accent-ink);text-transform:uppercase;margin:0 0 18px}
-h1{font-family:var(--serif);font-size:clamp(32px,5.4vw,48px);font-weight:600;line-height:1.06;letter-spacing:-.015em;margin:0;text-wrap:balance}
-h1 .light{color:var(--muted);font-style:italic;font-weight:500}
-h2{font-family:var(--serif);font-size:24px;font-weight:600;margin:36px 0 12px}
-.lede{font-size:18px;color:var(--muted);max-width:66ch;margin:20px 0 0}
-.lede strong{color:var(--ink);font-weight:600}
-table.map{border-collapse:collapse;width:100%;max-width:760px;font-size:14.5px}
-table.map th,table.map td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
-table.map th{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-footer{padding:44px 24px 72px;color:var(--muted);font-size:12.5px}
-footer .fnote{max-width:72ch}
-a{color:var(--accent)}
-</style>
+<link rel="alternate" hreflang="en" href="https://skola.weryta.com/pl/en/">
+<title>Skola — ile się nauczyłeś i czy Ci się podobało?</title>
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/tiles.css?v=8">
 </head>
 <body>
-<div class="langsw"><a href="../">EN</a> · <a class="on" href="./">PL</a> &nbsp;|&nbsp; <a href="https://physix.weryta.pl/">← physix</a> · <a href="https://girltech.me/S">Skola Dana</a></div>
+<nav class="top">
+  <span class="sk-egg-mark">Skola</span>
+  <span>
+    <a class="on" href="./">Start</a>
+    · <a href="explainer.html">Jak to działa</a>
+    · <a href="mailto:kontakt@weryta.pl">Kontakt</a>
+    · <a href="en/">EN</a>
+  </span>
+</nav>
 <section class="hero">
-  <p class="eyebrow">Skola — GirlTech USA × Weryta</p>
+  <p class="eyebrow">Dla szkół i uczelni w Polsce</p>
   <h1>Dużo się nauczyłeś <span class="light">i czy Ci się podobało?</span></h1>
-  <p class="lede">Dwa pytania. Jedno kliknięcie. Tyle robi uczeń po lekcji.</p>
-  <p class="lede">Uczeń klika w jedno pole kwadratu. <strong>Wyżej</strong> znaczy: więcej się nauczyłem.
-  <strong>Bardziej w prawo</strong> znaczy: bardziej mi się podobało. Jedno kliknięcie mówi więc
-  dwie rzeczy naraz i nigdy nie zlepia ich w jedną ocenę — bo lekcja może być trudna i dobra
-  jednocześnie, a może być miła i nic z niej nie wyniesiesz.</p>
+  <p class="lede">Dwa pytania. Jedno stuknięcie. Tyle robi <span data-noun="person">uczeń</span> po <span data-noun="lesson">lekcji</span>.</p>
+  <p class="lede">Wyżej oznacza: więcej się nauczyłem. W prawo: bardziej mi się podobało.
+  Jedno kliknięcie nigdy nie sprowadza tego do jednej gwiazdki — bo <span data-noun="lesson">lekcja</span> może być trudna i dobra jednocześnie.</p>
+  <div class="chips" role="group" aria-label="Szkoła albo uczelnia">
+    <button type="button" data-track="szkola">Szkoła</button>
+    <button type="button" data-track="uczelnia">Uczelnia</button>
+  </div>
+  <div class="chips" role="group" aria-label="Kim jesteś">
+    <button type="button" data-role="uczen">Uczeń</button>
+    <button type="button" data-role="rodzic">Rodzic</button>
+    <button type="button" data-role="nauczyciel">Nauczyciel</button>
+    <button type="button" data-role="dyrektor">Dyrektor / pedagog</button>
+    <button type="button" data-role="student">Student</button>
+  </div>
+  <div class="rolebox" id="role-copy"></div>
+  <p>
+    <a class="cta" href="#kwadrat">Spróbuj kwadratu</a>
+    <a class="cta ghost" href="explainer.html">Przeczytaj wyjaśnienie</a>
+  </p>
 </section>
 <hr class="rule">
-<section class="wrap">
+<section class="wrap" id="kwadrat">
   <h2>Jak używać kwadratu</h2>
+   <p class="lede" style="margin:0 0 18px">Kliknij pole. To jedyne, co trzeba tu umieć.</p>
   <div id="skola-guide"></div>
 </section>
 <hr class="rule">
 <section class="wrap">
-  <h2>Co potem widzi nauczyciel i szkoła</h2>
-  <p class="lede" style="margin:0 0 18px">Każde kliknięcie to jeden mały kolorowy kwadracik.
-  Złóż całą klasę i masz obrazek, który czyta się w sekundę.
-  Poniżej prawdziwe dane z aplikacji Dana — prawdziwe uczelnie, prawdziwe głosy.</p>
+  <h2>Co potem widzi <span data-noun="place">szkoła</span></h2>
+  <p class="lede" style="margin:0 0 12px">Każde stuknięcie to jeden mały kolorowy kwadracik.
+  Zbierz głosy całej klasy i masz obrazek, który czyta się w sekundę.
+  Poniżej <strong>przykładowe szkoły</strong> — kafelki bez podpisów, wymyślone nazwy, nie prawdziwe oceny.
+  Każdy kafelek to inna szkoła z własną kadrą. Szkoła bez herbu dostaje tarczę z nazwy.
+  <a href="app.html">Pełny ekran</a>.</p>
   <div id="skola"></div>
 </section>
 <hr class="rule">
 <section class="wrap">
-  <h2>Jeden model, dwie domeny</h2>
-  <p class="lede" style="margin:0 0 16px">Siatka uczelni powyżej działa na <strong>żywych danych ze Skoli Dana</strong>
-  (girltech.me/S), renderowanych przez kod tej strony — jego praca wewnątrz naszej.</p>
-  <p class="lede" style="margin:0 0 16px"><strong>To są dwie różne aplikacje.</strong> Tutaj, w Skoli,
-  uczeń klika w <strong>kwadrat</strong> i ocenia lekcję. Fairy Dice to osobne narzędzie
-  <a href="https://weryta.pl">Weryty</a> — tam klika się w <strong>trójkąt</strong> i ocenia się
-  odpowiedzi, a nie nauczycieli. Wspólny jest tylko sposób myślenia: dwie osobne osie zamiast
-  jednej oceny. Poniżej to samo zestawienie:</p>
-  <table class="map">
-    <tr><th></th><th>Weryta · Fairy Dice<br><span style="font-weight:400;font-size:11px;opacity:.75">inna aplikacja — trójkąt, ocena odpowiedzi</span></th><th>Skola · ocena nauczycieli<br><span style="font-weight:400;font-size:11px;opacity:.75">ta strona — kwadrat, ocena lekcji</span></th></tr>
-    <tr><td>Oś 1</td><td>czy to <strong>prawda</strong> (zgadzam się / nie)</td><td>czy się <strong>nauczyłem</strong> (dużo / nic)</td></tr>
-    <tr><td>Oś 2</td><td>czy mi się <strong>podoba</strong> — kolor wierzchołka: dobre / złe / obojętne.
-        Dan ujmuje tę samą oś szerzej, jako zadeklarowane nastawienie: „oceniasz jakość informacji kolorem”.</td>
-        <td>czy mi się <strong>podobało</strong> (kolor pola, chłodniej = lepiej)</td></tr>
-    <tr><td>Siódmy stan</td><td>brak oceny — kość nie upadła</td><td>brak kliknięcia — brak rekordu; „✋ nie nadążam” to osobny sygnał</td></tr>
-    <tr><td>Zapis</td><td>append-only ledger, nie zmienia faktów</td><td>strumień głosów w czasie, nigdy jedna średnia</td></tr>
-    <tr><td>Sygnał</td><td>jeden werdykt znaczy mało; liczy się powtarzalność</td><td>jeden zły głos znaczy mało; liczy się <em>to samo dziecko odpowiadające tak znowu</em></td></tr>
-  </table>
+  <h2>Czego tu nie ma</h2>
+  <p class="lede" style="margin:0">To nie służy do rozliczania nauczycieli. Pojedynczy zły głos nic nie znaczy.
+  Głosy są z założenia anonimowe. Częstotliwość ustala <span data-noun="place">szkoła</span>.
+  <a href="explainer.html">Pełne wyjaśnienie — jedna strona.</a></p>
 </section>
 <footer class="wrap">
-  <p class="fnote">Dane uczelni: na żywo z <a href="https://girltech.me/S">girltech.me/S</a> (GirlTech USA, Dr Dan),
-  z migawką na wypadek niedostępności API. Dane szkolne (K-8) są syntetyczne — pilotaż w szkole wymaga najpierw
-  rozstrzygnięcia anonimowości kontra jeden-głos-na-osobę. Oceny z tej strony zostają w Twojej przeglądarce.
-  Pytania? <a href="mailto:kontakt@weryta.pl">kontakt@weryta.pl</a></p>
-  <p class="fnote" style="margin-top:12px"><strong>Uwaga o osi uczenia się.</strong> API Dana numeruje wiersze
-  siatki od góry, a kliknięcie w górny wiersz — ten, który jego własna instrukcja opisuje jako „dużo się
-  nauczyłem” — zapisuje jako wartość <code>0</code>. Pole <code>learning</code> działa więc odwrotnie do swojej
-  nazwy i tak je tutaj czytamy: nauczyciel, o którym Dan mówi, że jego studenci „naprawdę dużo się nauczyli”,
-  ma u nas wysoki wynik. Na jego ekranie oba odwrócenia się znoszą i obraz jest poprawny — odwrócona jest tylko
-  liczba. Kolorów to nie dotyczy, bo biorą się z kolumn. Zgłoszone Danowi.</p>
+  <p class="fnote">Dane na tej stronie są przykładowe. Pilotaże ustalamy indywidualnie:
+  <a href="mailto:kontakt@weryta.pl">kontakt@weryta.pl</a>.
+  Wersja akademicka z danymi demonstracyjnymi z USA: <a href="https://skola.weryta.com/">skola.weryta.com</a>.</p>
 </footer>
-<script src="../assets/skola-data.js"></script>
-<script src="../assets/skola.js"></script>
+<script src="assets/skola.js?v=tiles6"></script>
+<script src="assets/site.js"></script>
 <script>
 Skola.guide(document.getElementById('skola-guide'), 'pl');
-Skola.mount(document.getElementById('skola'), { lang: 'pl' });
+Skola.tiles(document.getElementById('skola'), { lang: 'pl', assetBase: 'assets/' });
 </script>
+<!-- jajka off: ?eggs=0 (klei się w tej przeglądarce). z powrotem: ?eggs=1. albo wywal ten tag. -->
+<script src="assets/eggs.js?v=4"></script>
 </body>
 </html>

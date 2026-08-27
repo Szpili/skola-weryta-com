@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Skola — rate a class on two axes: how much you learned and whether you liked it. One tap. For schools and universities.">
+<meta property="og:title" content="Skola — two axes instead of one star">
+<meta property="og:description" content="Rate a class on two axes: how much you learned and whether you liked it. One tap.">
+<meta property="og:image" content="https://szpili.github.io/skola-pl/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="alternate" hreflang="pl" href="../">
+<title>Skola — did you learn a lot, and did you like it?</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tiles.css?v=8">
+</head>
+<body>
+<nav class="top">
+  <span class="sk-egg-mark">Skola</span>
+  <span>
+    <a class="on" href="./">Home</a>
+    · <a href="explainer.html">How it works</a>
+    · <a href="mailto:kontakt@weryta.pl">Contact</a>
+    · <a href="../">PL</a>
+  </span>
+</nav>
+<section class="hero">
+  <p class="eyebrow">For schools and universities</p>
+  <h1>Did you learn a lot <span class="light">and did you like it?</span></h1>
+  <p class="lede">Two questions. One tap. That is all a <span data-noun="person">student</span> does after <span data-noun="lesson">class</span>.</p>
+  <p class="lede">Higher means: I learned more. Further right means: I liked it more.
+  One tap never glues this into a single star — because a <span data-noun="lesson">class</span> can be hard and good at the same time.</p>
+  <div class="chips" role="group" aria-label="School or university">
+    <button type="button" data-track="szkola">School</button>
+    <button type="button" data-track="uczelnia">University</button>
+  </div>
+  <div class="chips" role="group" aria-label="Who you are">
+    <button type="button" data-role="uczen">Student</button>
+    <button type="button" data-role="rodzic">Parent</button>
+    <button type="button" data-role="nauczyciel">Teacher</button>
+    <button type="button" data-role="dyrektor">Principal / counselor</button>
+    <button type="button" data-role="student">College student</button>
+  </div>
+  <div class="rolebox" id="role-copy"></div>
+  <p>
+    <a class="cta" href="#square">Try the square</a>
+    <a class="cta ghost" href="explainer.html">Read the explainer</a>
+  </p>
+</section>
+<hr class="rule">
+<section class="wrap" id="square">
+  <h2>How to use the square</h2>
+  <p class="lede" style="margin:0 0 18px">Tap a cell. That is the only skill required.</p>
+  <div id="skola-guide"></div>
+</section>
+<hr class="rule">
+<section class="wrap">
+  <h2>What the <span data-noun="place">school</span> sees next</h2>
+  <p class="lede" style="margin:0 0 12px">Every tap is one small colored square.
+  Collect the whole class and you get a picture that reads in a second.
+  Below are <strong>sample schools</strong> — unlabeled tiles, invented names, not real ratings.
+  Each tile is a different school with its own staff. A school with no coat of arms gets a shield generated from its name.
+  <a href="app.html">Full screen</a>.</p>
+  <div id="skola"></div>
+</section>
+<hr class="rule">
+<section class="wrap">
+  <h2>What this is not</h2>
+  <p class="lede" style="margin:0">This is not for holding teachers to account. A single bad vote means nothing.
+  Votes are anonymous by design. The <span data-noun="place">school</span> sets the frequency.
+  <a href="explainer.html">Full explainer — one page.</a></p>
+</section>
+<footer class="wrap">
+  <p class="fnote">Data on this page is sample data. Pilots are arranged individually:
+  <a href="mailto:kontakt@weryta.pl">kontakt@weryta.pl</a>.
+  Academic demo with US demonstration data: <a href="https://skola.weryta.com/">skola.weryta.com</a>.</p>
+</footer>
+<script src="../assets/skola.js?v=tiles6"></script>
+<script src="../assets/site.js"></script>
+<script>
+Skola.guide(document.getElementById('skola-guide'), 'en');
+Skola.tiles(document.getElementById('skola'), { lang: 'en', assetBase: '../assets/' });
+</script>
+<!-- eggs off: ?eggs=0 (sticky in this browser). back on: ?eggs=1. or drop this tag. -->
+<script src="../assets/eggs.js?v=4"></script>
+</body>
+</html>
