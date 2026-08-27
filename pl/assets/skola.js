@@ -233,43 +233,43 @@
     { id: 'grove',
       name: { pl: 'SP im. Leśnej Polany', en: 'Forest Glade Primary' },
       teachers: [
-        { id: 'gv1', name: { pl: 'pani Jagoda', en: 'Ms. Jagoda' }, home: [4, 3] },
-        { id: 'gv2', name: { pl: 'pan Sosna', en: 'Mr. Sosna' }, home: [2, 4] },
-        { id: 'gv3', name: { pl: 'pani Brzoza', en: 'Ms. Brzoza' }, home: [3, 2] },
-        { id: 'gv4', name: { pl: 'pan Mech', en: 'Mr. Mech' }, home: [1, 3] }
+        { id: 'gv1', name: { pl: 'pani Jagoda', en: 'Ms. Jagoda' }, subject: { pl: 'Czytanie', en: 'Reading' }, home: [4, 3], photo: 'gv1.webp' },
+        { id: 'gv2', name: { pl: 'pan Sosna', en: 'Mr. Sosna' }, subject: { pl: 'Matematyka', en: 'Math' }, home: [2, 4], photo: 'gv2.webp' },
+        { id: 'gv3', name: { pl: 'pani Brzoza', en: 'Ms. Brzoza' }, subject: { pl: 'Przyroda', en: 'Science' }, home: [3, 2], photo: 'gv3.webp' },
+        { id: 'gv4', name: { pl: 'pan Mech', en: 'Mr. Mech' }, subject: { pl: 'WF', en: 'Gym' }, home: [1, 3], photo: 'gv4.webp' }
       ] },
     { id: 'river',
       name: { pl: 'Liceum nad Rzeką', en: 'Riverside Lyceum' },
       teachers: [
-        { id: 'rv1', name: { pl: 'pani Wilk', en: 'Ms. Wilk' }, home: [4, 4] },
-        { id: 'rv2', name: { pl: 'pan Most', en: 'Mr. Most' }, home: [0, 3] },
-        { id: 'rv3', name: { pl: 'pani Żuraw', en: 'Ms. Zuraw' }, home: [3, 3] },
-        { id: 'rv4', name: { pl: 'pan Bór', en: 'Mr. Bor' }, home: [2, 1] },
-        { id: 'rv5', name: { pl: 'pani Fala', en: 'Ms. Fala' }, home: [4, 2] }
+        { id: 'rv1', name: { pl: 'pani Wilk', en: 'Ms. Wilk' }, subject: { pl: 'Polski', en: 'Polish' }, home: [4, 4], photo: 'rv1.webp' },
+        { id: 'rv2', name: { pl: 'pan Most', en: 'Mr. Most' }, subject: { pl: 'Matematyka', en: 'Math' }, home: [0, 3], photo: 'rv2.webp' },
+        { id: 'rv3', name: { pl: 'pani Żuraw', en: 'Ms. Zuraw' }, subject: { pl: 'Biologia', en: 'Biology' }, home: [3, 3], photo: 'rv3.webp' },
+        { id: 'rv4', name: { pl: 'pan Bór', en: 'Mr. Bor' }, subject: { pl: 'Historia', en: 'History' }, home: [2, 1], photo: 'rv4.webp' },
+        { id: 'rv5', name: { pl: 'pani Fala', en: 'Ms. Fala' }, subject: { pl: 'Angielski', en: 'English' }, home: [4, 2], photo: 'rv5.webp' }
       ] },
     { id: 'dune',
       name: { pl: 'SP nr 12 im. Białej Wydmy', en: 'White Dune School No. 12' },
       teachers: [
-        { id: 'dn1', name: { pl: 'pani Słoma', en: 'Ms. Sloma' }, home: [3, 4] },
-        { id: 'dn2', name: { pl: 'pan Wydma', en: 'Mr. Wydma' }, home: [1, 2] },
-        { id: 'dn3', name: { pl: 'pani Mewa', en: 'Ms. Mewa' }, home: [4, 1] },
-        { id: 'dn4', name: { pl: 'pan Piasek', en: 'Mr. Piasek' }, home: [2, 2] }
+        { id: 'dn1', name: { pl: 'pani Słoma', en: 'Ms. Sloma' }, subject: { pl: 'Czytanie', en: 'Reading' }, home: [3, 4], photo: 'dn1.webp' },
+        { id: 'dn2', name: { pl: 'pan Wydma', en: 'Mr. Wydma' }, subject: { pl: 'Matematyka', en: 'Math' }, home: [1, 2], photo: 'dn2.webp' },
+        { id: 'dn3', name: { pl: 'pani Mewa', en: 'Ms. Mewa' }, subject: { pl: 'Plastyka', en: 'Art' }, home: [4, 1], photo: 'dn3.webp' },
+        { id: 'dn4', name: { pl: 'pan Piasek', en: 'Mr. Piasek' }, subject: { pl: 'WF', en: 'Gym' }, home: [2, 2], photo: 'dn4.webp' }
       ] },
     { id: 'sun',
       name: { pl: 'Technikum Słoneczne', en: 'Sun Vocational School' },
       teachers: [
-        { id: 'su1', name: { pl: 'pan Iskra', en: 'Mr. Iskra' }, home: [2, 4] },
-        { id: 'su2', name: { pl: 'pani Spaw', en: 'Ms. Spaw' }, home: [1, 1] },
-        { id: 'su3', name: { pl: 'pan Motor', en: 'Mr. Motor' }, home: [3, 3] },
-        { id: 'su4', name: { pl: 'pani Volt', en: 'Ms. Volt' }, home: [4, 2] }
+        { id: 'su1', name: { pl: 'pan Iskra', en: 'Mr. Iskra' }, subject: { pl: 'Elektronika', en: 'Electronics' }, home: [2, 4], photo: 'su1.webp' },
+        { id: 'su2', name: { pl: 'pani Spaw', en: 'Ms. Spaw' }, subject: { pl: 'Spawalnictwo', en: 'Welding' }, home: [1, 1], photo: 'su2.webp' },
+        { id: 'su3', name: { pl: 'pan Motor', en: 'Mr. Motor' }, subject: { pl: 'Mechanika', en: 'Mechanics' }, home: [3, 3], photo: 'su3.webp' },
+        { id: 'su4', name: { pl: 'pani Volt', en: 'Ms. Volt' }, subject: { pl: 'Elektrotechnika', en: 'Electrics' }, home: [4, 2], photo: 'su4.webp' }
       ] },
     { id: 'star',
       name: { pl: 'Szkoła Gwiazdy Polarnej', en: 'Polar Star School' },
       teachers: [
-        { id: 'st1', name: { pl: 'pani Zorza', en: 'Ms. Zorza' }, home: [4, 4] },
-        { id: 'st2', name: { pl: 'pan Lis', en: 'Mr. Lis' }, home: [0, 4] },
-        { id: 'st3', name: { pl: 'pani Sanie', en: 'Ms. Sanie' }, home: [2, 3] },
-        { id: 'st4', name: { pl: 'pan Mróz', en: 'Mr. Mroz' }, home: [3, 1] }
+        { id: 'st1', name: { pl: 'pani Zorza', en: 'Ms. Zorza' }, subject: { pl: 'Polski', en: 'Polish' }, home: [4, 4], photo: 'st1.webp' },
+        { id: 'st2', name: { pl: 'pan Lis', en: 'Mr. Lis' }, subject: { pl: 'Matematyka', en: 'Math' }, home: [0, 4], photo: 'st2.webp' },
+        { id: 'st3', name: { pl: 'pani Sanie', en: 'Ms. Sanie' }, subject: { pl: 'Muzyka', en: 'Music' }, home: [2, 3], photo: 'st3.webp' },
+        { id: 'st4', name: { pl: 'pan Mróz', en: 'Mr. Mroz' }, subject: { pl: 'WF', en: 'Gym' }, home: [3, 1], photo: 'st4.webp' }
       ] }
   ];
   /* Demo timetable for Hilltop class 3a — stand-in for Librus/Vulcan import.
@@ -311,6 +311,49 @@
       ]
     }
   };
+  function slugify(s) {
+    return String(s).toLowerCase()
+      .replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e')
+      .replace(/ł/g, 'l').replace(/ń/g, 'n').replace(/ó/g, 'o')
+      .replace(/ś/g, 's').replace(/ź|ż/g, 'z')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'lekcja';
+  }
+  /* Demo timetable per school — Hilltop uses the hand-written CLASS_PLAN;
+     others rotate that school's staff across Mon–Fri slots. */
+  function classPlanFor(sc) {
+    if (!sc || sc.id === 'hilltop') return CLASS_PLAN;
+    var roster = sc.teachers || [];
+    var times = ['08:00', '08:55', '10:00', '11:00'];
+    var days = {};
+    var d, s, te, subj, slug;
+    for (d = 1; d <= 5; d++) {
+      days[d] = [];
+      for (s = 0; s < times.length && roster.length; s++) {
+        te = roster[(d - 1 + s) % roster.length];
+        subj = te.subject || { pl: 'Lekcja', en: 'Class' };
+        slug = slugify(typeof subj === 'string' ? subj : subj.pl) + '-' + te.id;
+        days[d].push({ time: times[s], subject: subj, tid: te.id, slug: slug });
+      }
+    }
+    return {
+      schoolId: sc.id,
+      classId: '3a',
+      className: { pl: 'klasa 3a', en: 'class 3a' },
+      days: days
+    };
+  }
+  function lessonsOfTeacher(sc, tid) {
+    var plan = classPlanFor(sc);
+    var out = [];
+    var d, slots, i;
+    for (d = 1; d <= 5; d++) {
+      slots = plan.days[d] || [];
+      for (i = 0; i < slots.length; i++) {
+        if (slots[i].tid === tid) out.push({ wd: d, slot: slots[i] });
+      }
+    }
+    return out;
+  }
   function clamp5(v) { return v < 0 ? 0 : v > 4 ? 4 : v; }
   /* local calendar date — NOT toISOString(), which is UTC and shifts the day
      label for anyone east of UTC+12 ("what was his ranking today?" must mean
@@ -1381,7 +1424,7 @@
 
   /* ---------- TILES: Dan’s sp.html chrome (click, no labels) ----------
      Same 5×5 stream, fictional schools. No Three.js, no US joke flags.
-     Trail crumbs stack; teacher tap opens gray blox + day dots.
+     Trail crumbs stack; teacher tap opens gray blox + that teacher’s lessons.
      School with no logo gets a herb generated from its name. */
   function tiles(el, opts) {
     opts = opts || {};
@@ -1462,11 +1505,11 @@
     var HINT = lang === 'pl' ? {
       schools: 'Każdy kafelek to inna szkoła — inna kadra. Kolor ramki to głosy uczniów. Herb z nazwy, jeśli szkoła nie ma własnego. Stuknij szkołę.',
       teachers: 'Każdy kafelek to nauczyciel tej szkoły. Kolor ramki — jak klasa oceniła lekcje. Stuknij nauczyciela. Kafelek szkoły u góry wraca do listy szkół.',
-      results: 'Szary kwadrat: ile stuknięć w którym polu. Góra = więcej nauki, prawo = bardziej się podobało. Kropki na dole to dni. Mały kafelek szkoły u góry — wróć do nauczycieli.'
+      results: 'Szary kwadrat: ile stuknięć w którym polu. Góra = więcej nauki, prawo = bardziej się podobało. Pod spodem — zajęcia tego nauczyciela w planie klasy (stuknij lekcję, żeby ocenić). Mały kafelek szkoły u góry — wróć do nauczycieli.'
     } : {
       schools: 'Each tile is a different school, with its own staff. Border colour is the student votes. A school with no crest gets a shield from its name. Tap a school.',
       teachers: 'Each tile is a teacher at this school. Border colour is how the class rated the lessons. Tap a teacher. The school tile up top goes back to the school list.',
-      results: 'Grey square: how many taps landed in each cell. Up = learned more, right = liked it more. Dots underneath are days. The small school tile up top goes back to teachers.'
+      results: 'Grey square: how many taps landed in each cell. Up = learned more, right = liked it more. Underneath — this teacher’s classes on the timetable (tap a lesson to rate it). The small school tile up top goes back to teachers.'
     };
     function setHint(view) {
       hintView = view;
@@ -1641,45 +1684,61 @@
       return wrap;
     }
 
+    function locSubj(s) {
+      return typeof s === 'string' ? s : (lang === 'pl' ? s.pl : s.en);
+    }
+    function rateHref() {
+      return opts.rateHref || (assetBase.indexOf('..') === 0 ? 'rate.html' : 'rate.html');
+    }
     function showResults(te) {
       currentTeacher = te;
+      dayFilter = null;
       paintTrail();
       var all = votesOf(te.id);
-      var shown = dayFilter
-        ? all.filter(function (v) { return v.day === dayFilter; })
-        : all;
       var box = document.createElement('div');
       box.className = 'skt-results';
-      box.appendChild(bloxEl(cellsFromVotes(shown)));
+      box.appendChild(bloxEl(cellsFromVotes(all)));
 
-      var days = school.days.slice();
-      all.forEach(function (v) { if (days.indexOf(v.day) < 0) days.push(v.day); });
-      days.sort();
-      if (days.length > 10) days = days.slice(-10);
-      var row = document.createElement('div');
-      row.className = 'skt-days';
-      row.setAttribute('aria-label', lang === 'pl' ? 'Dni' : 'Days');
-      days.forEach(function (day, di) {
-        var dv = all.filter(function (v) { return v.day === day; });
-        var rgb = aggRGB(cellsFromVotes(dv));
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.style.setProperty('--i', String(di));
-        b.setAttribute('aria-label', day);
-        if (dayFilter === day) b.classList.add('is-on');
-        var dot = document.createElement('span');
-        dot.className = 'dot';
-        var sz = dv.length ? Math.round(8 + 10 * Math.min(1, Math.sqrt(dv.length / 8))) : 6;
-        dot.style.width = dot.style.height = sz + 'px';
-        dot.style.background = dv.length && rgb ? css(rgb) : '#222';
-        b.appendChild(dot);
-        b.addEventListener('click', function () {
-          dayFilter = dayFilter === day ? null : day;
-          showResults(te);
+      var dow = lang === 'pl'
+        ? ['', 'pn', 'wt', 'śr', 'cz', 'pt']
+        : ['', 'Mo', 'Tu', 'We', 'Th', 'Fr'];
+      var lessons = lessonsOfTeacher(currentSchool, te.id);
+      var list = document.createElement('div');
+      list.className = 'skt-lessons';
+      list.setAttribute('aria-label', lang === 'pl' ? 'Plan zajęć' : 'Class schedule');
+      if (!lessons.length) {
+        var empty = document.createElement('p');
+        empty.className = 'skt-lessons-empty';
+        empty.textContent = lang === 'pl'
+          ? 'Brak zajęć w przykładowym planie.'
+          : 'No classes on the sample timetable.';
+        list.appendChild(empty);
+      } else {
+        lessons.forEach(function (L, i) {
+          var a = document.createElement('a');
+          a.className = 'skt-lesson';
+          a.style.setProperty('--i', String(i));
+          a.href = rateHref() + '?s=' + encodeURIComponent(currentSchool.id) +
+            '&p=3a-' + L.slot.slug + '-' +
+            (function () {
+              var d = new Date();
+              var wd = d.getDay() || 7;
+              d.setDate(d.getDate() - (wd - 1) + (L.wd - 1));
+              return String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+            })();
+          a.innerHTML =
+            '<span class="skt-lesson-when">' + dow[L.wd] + ' ' + L.slot.time + '</span>' +
+            '<span class="skt-lesson-what">' + locSubj(L.slot.subject) + '</span>' +
+            '<span class="skt-lesson-go">' + (lang === 'pl' ? 'Oceń' : 'Rate') + '</span>';
+          list.appendChild(a);
         });
-        row.appendChild(b);
-      });
-      box.appendChild(row);
+      }
+      var more = document.createElement('a');
+      more.className = 'skt-lessons-more';
+      more.href = rateHref() + '?s=' + encodeURIComponent(currentSchool.id);
+      more.textContent = lang === 'pl' ? 'Pełny plan lekcji →' : 'Full timetable →';
+      list.appendChild(more);
+      box.appendChild(list);
       stageEl.innerHTML = '';
       stageEl.appendChild(box);
       setHint('results');
@@ -1712,13 +1771,22 @@
     var lang = opts.lang === 'pl' ? 'pl' : 'en';
     var assetBase = opts.assetBase || 'assets/';
     var school = DEMO_SCHOOLS[0];
-    var teachers = school.teachers;
+    var activePlan = CLASS_PLAN;
     var today = new Date();
     var day = today.getDay();
     if (day === 0) today.setDate(today.getDate() - 2);
     else if (day === 6) today.setDate(today.getDate() - 1);
     var selected = ymd(today);
     var activeLesson = null;
+    try {
+      var qs = new URLSearchParams(location.search).get('s');
+      if (qs) {
+        for (var si = 0; si < DEMO_SCHOOLS.length; si++) {
+          if (DEMO_SCHOOLS[si].id === qs) { school = DEMO_SCHOOLS[si]; break; }
+        }
+      }
+    } catch (e0) {}
+    activePlan = classPlanFor(school);
 
     var T = lang === 'pl' ? {
       week: 'Ten tydzień',
@@ -1743,8 +1811,16 @@
     };
 
     function teById(id) {
-      for (var i = 0; i < teachers.length; i++) if (teachers[i].id === id) return teachers[i];
+      var si, ti, list;
+      for (si = 0; si < DEMO_SCHOOLS.length; si++) {
+        list = DEMO_SCHOOLS[si].teachers || [];
+        for (ti = 0; ti < list.length; ti++) if (list[ti].id === id) return list[ti];
+      }
       return null;
+    }
+    function useSchool(sc) {
+      school = sc || DEMO_SCHOOLS[0];
+      activePlan = classPlanFor(school);
     }
     function loc(x) { return typeof x === 'string' ? x : (lang === 'pl' ? x.pl : x.en); }
     function weekDays() {
@@ -1760,7 +1836,7 @@
     }
     function poolId(lesson, dayYmd) {
       var mmdd = dayYmd.slice(5, 7) + dayYmd.slice(8, 10);
-      return CLASS_PLAN.classId + '-' + lesson.slug + '-' + mmdd;
+      return activePlan.classId + '-' + lesson.slug + '-' + mmdd;
     }
     function saveVote(pool, gx, gy) {
       var key = 'skola_pool_' + pool;
@@ -1830,7 +1906,7 @@
       listEl.innerHTML = '';
       var d = new Date(selected + 'T12:00:00');
       var wd = d.getDay();
-      var slots = CLASS_PLAN.days[wd] || [];
+      var slots = activePlan.days[wd] || [];
       if (!slots.length) {
         listEl.innerHTML = '<p class="skp-empty">' + esc(T.empty) + '</p>';
         return;
@@ -1852,7 +1928,7 @@
           faceHtml +
           '<span class="skp-meta">' +
             '<strong>' + esc(loc(slot.subject)) + '</strong>' +
-            '<span>' + esc(te ? loc(te.name) : '') + ' · ' + esc(loc(CLASS_PLAN.className)) + '</span>' +
+            '<span>' + esc(te ? loc(te.name) : '') + ' · ' + esc(loc(activePlan.className)) + '</span>' +
           '</span>' +
           '<span class="skp-go">' + esc(T.rate) + '</span>';
         row.addEventListener('click', function () { openLesson(slot); });
@@ -1894,7 +1970,7 @@
     paintWeek();
     paintList();
 
-    /* Deep-link: ?p=3a-matematyka-0827 opens that lesson if it matches today/week. */
+    /* Deep-link: ?p=3a-matematyka-0827 (or slug with teacher id) opens that lesson. */
     try {
       var qp = new URLSearchParams(location.search).get('p');
       if (qp) {
@@ -1905,10 +1981,16 @@
           var y = selected.slice(0, 4);
           var dayY = y + '-' + mmdd.slice(0, 2) + '-' + mmdd.slice(2, 4);
           if (/^\d{4}-\d{2}-\d{2}$/.test(dayY)) selected = dayY;
+          var wd2 = new Date(selected + 'T12:00:00').getDay();
+          var found = null;
+          var sj;
+          for (sj = 0; sj < DEMO_SCHOOLS.length; sj++) {
+            var pln = classPlanFor(DEMO_SCHOOLS[sj]);
+            var hit = (pln.days[wd2] || []).filter(function (s) { return s.slug === slug; })[0];
+            if (hit) { useSchool(DEMO_SCHOOLS[sj]); found = hit; break; }
+          }
           paintWeek();
           paintList();
-          var wd2 = new Date(selected + 'T12:00:00').getDay();
-          var found = (CLASS_PLAN.days[wd2] || []).filter(function (s) { return s.slug === slug; })[0];
           if (found) openLesson(found);
         }
       }
