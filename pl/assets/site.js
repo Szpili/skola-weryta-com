@@ -13,7 +13,7 @@
       roles: {
         uczen: {
           track: 'szkola',
-          you: 'Skanujesz kod QR po lekcji i stukasz jedno z pól kwadratu. Bez konta, bez nazwiska, kilka sekund.',
+          you: 'Otwierasz plan lekcji (albo skanujesz QR po lekcji) i stukasz jedno pole kwadratu. Bez konta, bez nazwiska, kilka sekund.',
           then: 'Nauczyciel widzi obrazek klasy, nie Twoje imię. Jedno kliknięcie nic nie znaczy — liczy się, gdy ktoś wiele razy odpowiada tak samo.'
         },
         rodzic: {
@@ -48,7 +48,7 @@
       roles: {
         uczen: {
           track: 'szkola',
-          you: 'You scan a QR code after class and tap one cell on the square. No account, no name, a few seconds.',
+          you: 'You open the timetable (or scan a QR after class) and tap one cell on the square. No account, no name, a few seconds.',
           then: 'The teacher sees a picture of the class, not your name. One tap means nothing — it counts when someone keeps answering the same way.'
         },
         rodzic: {

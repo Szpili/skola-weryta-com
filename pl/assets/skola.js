@@ -272,6 +272,45 @@
         { id: 'st4', name: { pl: 'pan Mróz', en: 'Mr. Mroz' }, home: [3, 1] }
       ] }
   ];
+  /* Demo timetable for Hilltop class 3a — stand-in for Librus/Vulcan import.
+     Day key: 1=Mon … 5=Fri. tid points at hilltop teachers. */
+  var CLASS_PLAN = {
+    schoolId: 'hilltop',
+    classId: '3a',
+    className: { pl: 'klasa 3a', en: 'class 3a' },
+    days: {
+      1: [
+        { time: '08:00', subject: { pl: 'Czytanie', en: 'Reading' }, tid: 'sd1', slug: 'czytanie' },
+        { time: '08:55', subject: { pl: 'Matematyka', en: 'Math' }, tid: 'sd2', slug: 'matematyka' },
+        { time: '10:00', subject: { pl: 'Przyroda', en: 'Science' }, tid: 'sd3', slug: 'przyroda' },
+        { time: '11:00', subject: { pl: 'WF', en: 'Gym' }, tid: 'sd6', slug: 'wf' }
+      ],
+      2: [
+        { time: '08:00', subject: { pl: 'Matematyka', en: 'Math' }, tid: 'sd2', slug: 'matematyka' },
+        { time: '08:55', subject: { pl: 'Historia', en: 'History' }, tid: 'sd4', slug: 'historia' },
+        { time: '10:00', subject: { pl: 'Czytanie', en: 'Reading' }, tid: 'sd1', slug: 'czytanie' },
+        { time: '11:00', subject: { pl: 'Plastyka', en: 'Art' }, tid: 'sd5', slug: 'plastyka' }
+      ],
+      3: [
+        { time: '08:00', subject: { pl: 'Przyroda', en: 'Science' }, tid: 'sd3', slug: 'przyroda' },
+        { time: '08:55', subject: { pl: 'Czytanie', en: 'Reading' }, tid: 'sd1', slug: 'czytanie' },
+        { time: '10:00', subject: { pl: 'Matematyka', en: 'Math' }, tid: 'sd2', slug: 'matematyka' },
+        { time: '11:00', subject: { pl: 'Historia', en: 'History' }, tid: 'sd4', slug: 'historia' }
+      ],
+      4: [
+        { time: '08:00', subject: { pl: 'Historia', en: 'History' }, tid: 'sd4', slug: 'historia' },
+        { time: '08:55', subject: { pl: 'WF', en: 'Gym' }, tid: 'sd6', slug: 'wf' },
+        { time: '10:00', subject: { pl: 'Plastyka', en: 'Art' }, tid: 'sd5', slug: 'plastyka' },
+        { time: '11:00', subject: { pl: 'Matematyka', en: 'Math' }, tid: 'sd2', slug: 'matematyka' }
+      ],
+      5: [
+        { time: '08:00', subject: { pl: 'Czytanie', en: 'Reading' }, tid: 'sd1', slug: 'czytanie' },
+        { time: '08:55', subject: { pl: 'Przyroda', en: 'Science' }, tid: 'sd3', slug: 'przyroda' },
+        { time: '10:00', subject: { pl: 'Plastyka', en: 'Art' }, tid: 'sd5', slug: 'plastyka' },
+        { time: '11:00', subject: { pl: 'WF', en: 'Gym' }, tid: 'sd6', slug: 'wf' }
+      ]
+    }
+  };
   function clamp5(v) { return v < 0 ? 0 : v > 4 ? 4 : v; }
   /* local calendar date — NOT toISOString(), which is UTC and shifts the day
      label for anyone east of UTC+12 ("what was his ranking today?" must mean
@@ -1484,6 +1523,12 @@
         frame.appendChild(iniEl(name));
       }
       btn.addEventListener('click', onClick);
+      if (!crumb) {
+        var cap = document.createElement('span');
+        cap.className = 'skt-cap';
+        cap.textContent = name;
+        btn.appendChild(cap);
+      }
       return btn;
     }
 
@@ -1659,11 +1704,223 @@
     }
   }
 
+  /* ---------- PLAN: week calendar + timetable → rate this lesson ----------
+     Demo stand-in for Librus/Vulcan. Pool id in URL (?p=3a-slug-MMDD) matches
+     materialy/pule-url.md — teacher can print that as a QR later. */
+  function plan(el, opts) {
+    opts = opts || {};
+    var lang = opts.lang === 'pl' ? 'pl' : 'en';
+    var assetBase = opts.assetBase || 'assets/';
+    var school = DEMO_SCHOOLS[0];
+    var teachers = school.teachers;
+    var today = new Date();
+    var day = today.getDay();
+    if (day === 0) today.setDate(today.getDate() - 2);
+    else if (day === 6) today.setDate(today.getDate() - 1);
+    var selected = ymd(today);
+    var activeLesson = null;
+
+    var T = lang === 'pl' ? {
+      week: 'Ten tydzień',
+      todayLessons: 'Lekcje tego dnia',
+      empty: 'W weekend nie ma planu — wybierz dzień roboczy.',
+      rate: 'Oceń tę lekcję',
+      pool: 'Pula głosów',
+      note: 'Demo planu lekcji klasy 3a. W szkole ten widok bierze się z kalendarza / Librusa / Vulcana — tu jest przykładowy tydzień. Stuknij lekcję, potem jedno pole kwadratu.',
+      saved: 'Zapisano w tej przeglądarce.',
+      back: 'Wróć do planu',
+      dow: ['nd', 'pn', 'wt', 'śr', 'cz', 'pt', 'so']
+    } : {
+      week: 'This week',
+      todayLessons: 'Lessons that day',
+      empty: 'No timetable on weekends — pick a weekday.',
+      rate: 'Rate this class',
+      pool: 'Vote pool',
+      note: 'Demo timetable for class 3a. At a real school this comes from the calendar / SIS. Tap a lesson, then one cell on the square.',
+      saved: 'Saved in this browser.',
+      back: 'Back to timetable',
+      dow: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+    };
+
+    function teById(id) {
+      for (var i = 0; i < teachers.length; i++) if (teachers[i].id === id) return teachers[i];
+      return null;
+    }
+    function loc(x) { return typeof x === 'string' ? x : (lang === 'pl' ? x.pl : x.en); }
+    function weekDays() {
+      var d = new Date(selected + 'T12:00:00');
+      var wd = d.getDay() || 7;
+      d.setDate(d.getDate() - (wd - 1));
+      var out = [];
+      for (var i = 0; i < 5; i++) {
+        out.push(ymd(d));
+        d.setDate(d.getDate() + 1);
+      }
+      return out;
+    }
+    function poolId(lesson, dayYmd) {
+      var mmdd = dayYmd.slice(5, 7) + dayYmd.slice(8, 10);
+      return CLASS_PLAN.classId + '-' + lesson.slug + '-' + mmdd;
+    }
+    function saveVote(pool, gx, gy) {
+      var key = 'skola_pool_' + pool;
+      var arr = [];
+      try { arr = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
+      arr.push({ gx: gx, gy: gy, at: Date.now() });
+      try { localStorage.setItem(key, JSON.stringify(arr)); return true; } catch (e) { return false; }
+    }
+
+    el.classList.add('skp');
+    el.innerHTML =
+      '<p class="skp-note"></p>' +
+      '<div class="skp-week" role="tablist"></div>' +
+      '<h3 class="skp-h"></h3>' +
+      '<div class="skp-list"></div>' +
+      '<div class="skp-rate" hidden>' +
+        '<button type="button" class="skp-back"></button>' +
+        '<div class="skp-lesson"></div>' +
+        '<div class="skp-square"></div>' +
+        '<p class="skp-status" role="status"></p>' +
+      '</div>';
+    el.querySelector('.skp-note').textContent = T.note;
+    el.querySelector('.skp-h').textContent = T.todayLessons;
+    el.querySelector('.skp-back').textContent = '← ' + T.back;
+
+    var weekEl = el.querySelector('.skp-week');
+    var listEl = el.querySelector('.skp-list');
+    var rateEl = el.querySelector('.skp-rate');
+    var lessonEl = el.querySelector('.skp-lesson');
+    var squareEl = el.querySelector('.skp-square');
+    var statusEl = el.querySelector('.skp-status');
+
+    el.querySelector('.skp-back').addEventListener('click', function () {
+      activeLesson = null;
+      rateEl.hidden = true;
+      listEl.hidden = false;
+      weekEl.hidden = false;
+      el.querySelector('.skp-h').hidden = false;
+      statusEl.textContent = '';
+      if (opts.hash) history.replaceState(null, '', location.pathname + location.search);
+    });
+
+    function paintWeek() {
+      weekEl.innerHTML = '';
+      weekDays().forEach(function (dayYmd) {
+        var d = new Date(dayYmd + 'T12:00:00');
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'skp-day' + (dayYmd === selected ? ' is-on' : '');
+        b.setAttribute('role', 'tab');
+        b.setAttribute('aria-selected', dayYmd === selected ? 'true' : 'false');
+        b.innerHTML = '<span class="skp-dow">' + T.dow[d.getDay()] + '</span>' +
+          '<span class="skp-dom">' + d.getDate() + '</span>';
+        b.addEventListener('click', function () {
+          selected = dayYmd;
+          activeLesson = null;
+          rateEl.hidden = true;
+          listEl.hidden = false;
+          paintWeek();
+          paintList();
+        });
+        weekEl.appendChild(b);
+      });
+    }
+
+    function paintList() {
+      listEl.innerHTML = '';
+      var d = new Date(selected + 'T12:00:00');
+      var wd = d.getDay();
+      var slots = CLASS_PLAN.days[wd] || [];
+      if (!slots.length) {
+        listEl.innerHTML = '<p class="skp-empty">' + esc(T.empty) + '</p>';
+        return;
+      }
+      slots.forEach(function (slot) {
+        var te = teById(slot.tid);
+        var row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'skp-row';
+        var faceHtml = '';
+        if (te && te.photo) {
+          faceHtml = '<img class="skp-face" src="' + esc(assetBase + 'teachers/' + te.photo) + '" alt="">';
+        } else {
+          var ini = te ? loc(te.name).replace(/^(pani|pan|Ms\.|Mr\.)\s+/i, '').slice(0, 2).toUpperCase() : '?';
+          faceHtml = '<span class="skp-face skp-ini">' + esc(ini) + '</span>';
+        }
+        row.innerHTML =
+          '<span class="skp-time">' + esc(slot.time) + '</span>' +
+          faceHtml +
+          '<span class="skp-meta">' +
+            '<strong>' + esc(loc(slot.subject)) + '</strong>' +
+            '<span>' + esc(te ? loc(te.name) : '') + ' · ' + esc(loc(CLASS_PLAN.className)) + '</span>' +
+          '</span>' +
+          '<span class="skp-go">' + esc(T.rate) + '</span>';
+        row.addEventListener('click', function () { openLesson(slot); });
+        listEl.appendChild(row);
+      });
+    }
+
+    function openLesson(slot) {
+      activeLesson = slot;
+      var te = teById(slot.tid);
+      var pool = poolId(slot, selected);
+      listEl.hidden = true;
+      weekEl.hidden = false;
+      el.querySelector('.skp-h').hidden = true;
+      rateEl.hidden = false;
+      var img = (te && te.photo)
+        ? '<img class="skp-face" src="' + esc(assetBase + 'teachers/' + te.photo) + '" alt="">'
+        : '';
+      lessonEl.innerHTML =
+        img +
+        '<div><strong>' + esc(loc(slot.subject)) + '</strong>' +
+        '<div>' + esc(slot.time) + ' · ' + esc(te ? loc(te.name) : '') + '</div>' +
+        '<div class="skp-pool">' + esc(T.pool) + ': <code>p=' + esc(pool) + '</code></div></div>';
+      squareEl.innerHTML = '';
+      guide(squareEl, lang);
+      statusEl.textContent = '';
+      squareEl.querySelectorAll('.skg-c').forEach(function (cell) {
+        cell.addEventListener('click', function () {
+          var gx = +cell.getAttribute('data-gx');
+          var gy = +cell.getAttribute('data-gy');
+          if (saveVote(pool, gx, gy)) statusEl.textContent = T.saved + ' p=' + pool;
+        });
+      });
+      if (opts.hash) {
+        history.replaceState(null, '', '?p=' + encodeURIComponent(pool) + '#rate');
+      }
+    }
+
+    paintWeek();
+    paintList();
+
+    /* Deep-link: ?p=3a-matematyka-0827 opens that lesson if it matches today/week. */
+    try {
+      var qp = new URLSearchParams(location.search).get('p');
+      if (qp) {
+        var parts = qp.split('-');
+        if (parts.length >= 3) {
+          var slug = parts.slice(1, -1).join('-');
+          var mmdd = parts[parts.length - 1];
+          var y = selected.slice(0, 4);
+          var dayY = y + '-' + mmdd.slice(0, 2) + '-' + mmdd.slice(2, 4);
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dayY)) selected = dayY;
+          paintWeek();
+          paintList();
+          var wd2 = new Date(selected + 'T12:00:00').getDay();
+          var found = (CLASS_PLAN.days[wd2] || []).filter(function (s) { return s.slug === slug; })[0];
+          if (found) openLesson(found);
+        }
+      }
+    } catch (e) {}
+  }
+
   /* exports (browser + node self-check) */
   var api = {
     mount: mount,
     guide: guide,
     tiles: tiles,
+    plan: plan,
     _herb: { svg: herbSvg, uri: herbDataUri, hash: hashStr },
     _math: { aggRGB: aggRGB, learningOf: learningOf, likingOf: likingOf, totalOf: totalOf, colSums: colSums, cellsFromVotes: cellsFromVotes, patterns: patterns, flipRows: flipRows },
     _gen: { genSchool: genSchool, mulberry32: mulberry32 }

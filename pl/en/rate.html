@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Skola — timetable and class rating. Pick a day, tap a lesson, rate on the square.">
+<title>Skola — rate a class</title>
+<link rel="stylesheet" href="../assets/site.css?v=plan1">
+</head>
+<body>
+<nav class="top">
+  <span class="sk-egg-mark">Skola</span>
+  <span>
+    <a href="./">Home</a>
+    · <a class="on" href="rate.html">Rate a class</a>
+    · <a href="explainer.html">How it works</a>
+    · <a href="../rate.html">PL</a>
+  </span>
+</nav>
+<section class="hero">
+  <p class="eyebrow">Student · class 3a (demo)</p>
+  <h1>What’s on the <span class="light">timetable today?</span></h1>
+  <p class="lede">A week calendar and lesson list — so you can find a class and rate it with one tap.
+  At a real school this comes from the SIS / calendar; here it is a sample week.</p>
+</section>
+<hr class="rule">
+<section class="wrap" id="plan">
+  <div id="skola-plan"></div>
+</section>
+<footer class="wrap">
+  <p class="fnote">The vote pool is in the URL (<code>?p=3a-math-0827</code>) — the same string becomes a QR for that lesson.
+  Votes stay in this browser. <a href="./">Back home</a>.</p>
+</footer>
+<script src="../assets/skola.js?v=tiles7"></script>
+<script>
+Skola.plan(document.getElementById('skola-plan'), { lang: 'en', assetBase: '../assets/', hash: true });
+</script>
+<script src="../assets/eggs.js?v=4"></script>
+</body>
+</html>

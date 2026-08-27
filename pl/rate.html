@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Skola — plan lekcji i ocena zajęć. Wybierz dzień, stuknij lekcję, oceń kwadratem.">
+<title>Skola — oceń lekcję</title>
+<link rel="stylesheet" href="assets/site.css?v=plan1">
+</head>
+<body>
+<nav class="top">
+  <span class="sk-egg-mark">Skola</span>
+  <span>
+    <a href="./">Start</a>
+    · <a class="on" href="rate.html">Oceń lekcję</a>
+    · <a href="explainer.html">Jak to działa</a>
+    · <a href="en/rate.html">EN</a>
+  </span>
+</nav>
+<section class="hero">
+  <p class="eyebrow">Uczeń · klasa 3a (demo)</p>
+  <h1>Co masz dziś <span class="light">w planie?</span></h1>
+  <p class="lede">Kalendarz tygodnia i plan lekcji — żeby znaleźć zajęcia i ocenić je jednym stuknięciem.
+  W prawdziwej szkole to samo bierze się z Librusa / Vulcana / kalendarza; tu jest przykładowy tydzień.</p>
+</section>
+<hr class="rule">
+<section class="wrap" id="plan">
+  <div id="skola-plan"></div>
+</section>
+<footer class="wrap">
+  <p class="fnote">Pula głosów jest w adresie (<code>?p=3a-matematyka-0827</code>) — z tego samego ciągu zrobi się QR na lekcję.
+  Dane zostają w tej przeglądarce. <a href="./">Wróć na start</a>.</p>
+</footer>
+<script src="assets/skola.js?v=tiles7"></script>
+<script>
+Skola.plan(document.getElementById('skola-plan'), { lang: 'pl', assetBase: 'assets/', hash: true });
+</script>
+<script src="assets/eggs.js?v=4"></script>
+</body>
+</html>
