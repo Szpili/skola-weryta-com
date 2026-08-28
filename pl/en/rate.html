@@ -29,10 +29,11 @@
 </section>
 <footer class="wrap">
   <p class="fnote">The vote pool is in the URL (<code>?p=3a-math-0827</code>) — the same string becomes a QR for that lesson.
-  Votes stay in this browser. <a href="./">Back home</a>.</p>
+  Votes go to the database; a copy stays in this browser too. <a href="./">Back home</a>.</p>
 </footer>
-<script src="../assets/skola.js?v=tiles8"></script>
+<script src="../assets/skola.js?v=tiles9"></script>
 <script>
+window.SKOLA_API = 'https://nerdwar.one/G0/api.php';
 Skola.plan(document.getElementById('skola-plan'), { lang: 'en', assetBase: '../assets/', hash: true });
 </script>
 <script src="../assets/eggs.js?v=4"></script>

@@ -1795,7 +1795,9 @@
       rate: 'Oceń tę lekcję',
       pool: 'Pula głosów',
       note: 'Demo planu lekcji klasy 3a. W szkole ten widok bierze się z kalendarza / Librusa / Vulcana — tu jest przykładowy tydzień. Stuknij lekcję, potem jedno pole kwadratu.',
-      saved: 'Zapisano w tej przeglądarce.',
+      saved: 'Zapisano w bazie.',
+      savedLocal: 'Baza niedostępna — zapisano w tej przeglądarce.',
+      savedBrowser: 'Zapisano w tej przeglądarce.',
       back: 'Wróć do planu',
       dow: ['nd', 'pn', 'wt', 'śr', 'cz', 'pt', 'so']
     } : {
@@ -1805,7 +1807,9 @@
       rate: 'Rate this class',
       pool: 'Vote pool',
       note: 'Demo timetable for class 3a. At a real school this comes from the calendar / SIS. Tap a lesson, then one cell on the square.',
-      saved: 'Saved in this browser.',
+      saved: 'Saved to the database.',
+      savedLocal: 'Database unreachable — saved in this browser.',
+      savedBrowser: 'Saved in this browser.',
       back: 'Back to timetable',
       dow: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
     };
@@ -1838,12 +1842,27 @@
       var mmdd = dayYmd.slice(5, 7) + dayYmd.slice(8, 10);
       return activePlan.classId + '-' + lesson.slug + '-' + mmdd;
     }
-    function saveVote(pool, gx, gy) {
+    function apiUrl() {
+      return opts.api || (typeof window !== 'undefined' && window.SKOLA_API) || '';
+    }
+    function saveLocal(pool, gx, gy) {
       var key = 'skola_pool_' + pool;
       var arr = [];
       try { arr = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
       arr.push({ gx: gx, gy: gy, at: Date.now() });
       try { localStorage.setItem(key, JSON.stringify(arr)); return true; } catch (e) { return false; }
+    }
+    function saveVote(pool, gx, gy, done) {
+      var localOk = saveLocal(pool, gx, gy);
+      var url = apiUrl();
+      if (!url) { done(localOk, localOk ? 'browser' : 'fail'); return; }
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p: pool, gx: gx, gy: gy })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        done(!!(j && j.ok) || localOk, j && j.ok ? 'db' : (localOk ? 'fallback' : 'fail'));
+      }).catch(function () { done(localOk, localOk ? 'fallback' : 'fail'); });
     }
 
     el.classList.add('skp');
@@ -1959,7 +1978,11 @@
         cell.addEventListener('click', function () {
           var gx = +cell.getAttribute('data-gx');
           var gy = +cell.getAttribute('data-gy');
-          if (saveVote(pool, gx, gy)) statusEl.textContent = T.saved + ' p=' + pool;
+          saveVote(pool, gx, gy, function (ok, where) {
+            if (!ok) { statusEl.textContent = ''; return; }
+            var msg = where === 'db' ? T.saved : where === 'fallback' ? T.savedLocal : T.savedBrowser;
+            statusEl.textContent = msg + ' p=' + pool;
+          });
         });
       });
       if (opts.hash) {
