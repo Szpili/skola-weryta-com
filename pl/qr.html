@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Skola — kody QR lekcji, nauczyciela i studentów. Bez kont.">
+<title>Skola — kody QR</title>
+<link rel="stylesheet" href="assets/site.css?v=qr1">
+</head>
+<body>
+<nav class="top skq-noprint">
+  <span class="sk-egg-mark">Skola</span>
+  <span>
+    <a href="./">Start</a>
+    · <a href="rate.html">Oceń lekcję</a>
+    · <a class="on" href="qr.html">Kody QR</a>
+    · <a href="explainer.html">Jak to działa</a>
+    · <a href="en/qr.html">EN</a>
+  </span>
+</nav>
+<section class="hero wrap" id="skq"></section>
+<footer class="wrap skq-noprint">
+  <p class="fnote">Kod lekcji idzie na ostatni slajd. Kartki studentów są opcjonalne — to losowe żetony, nie nazwiska.
+  Głosy: <code>szkola_pl</code> na nerdwar.one. <a href="./">Wróć</a>.</p>
+</footer>
+<script src="assets/qr.js?v=2"></script>
+<script>
+window.SKOLA_API = 'https://nerdwar.one/G0/api.php';
+SkolaQR.mount(document.getElementById('skq'), { lang: 'pl' });
+</script>
+<script src="assets/eggs.js?v=4"></script>
+</body>
+</html>

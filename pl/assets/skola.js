@@ -1798,6 +1798,7 @@
       saved: 'Zapisano w bazie.',
       savedLocal: 'Baza niedostępna — zapisano w tej przeglądarce.',
       savedBrowser: 'Zapisano w tej przeglądarce.',
+      voted: 'Ten kod już głosował na tę lekcję.',
       back: 'Wróć do planu',
       dow: ['nd', 'pn', 'wt', 'śr', 'cz', 'pt', 'so']
     } : {
@@ -1810,6 +1811,7 @@
       saved: 'Saved to the database.',
       savedLocal: 'Database unreachable — saved in this browser.',
       savedBrowser: 'Saved in this browser.',
+      voted: 'This code already voted on this lesson.',
       back: 'Back to timetable',
       dow: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
     };
@@ -1852,16 +1854,29 @@
       arr.push({ gx: gx, gy: gy, at: Date.now() });
       try { localStorage.setItem(key, JSON.stringify(arr)); return true; } catch (e) { return false; }
     }
+    function studentTok() {
+      try { return (new URLSearchParams(location.search).get('s') || '').toLowerCase(); } catch (e) { return ''; }
+    }
+    function voteQs(pool) {
+      var q = '?p=' + encodeURIComponent(pool);
+      var s = studentTok();
+      if (s) q += '&s=' + encodeURIComponent(s);
+      return q;
+    }
     function saveVote(pool, gx, gy, done) {
       var localOk = saveLocal(pool, gx, gy);
       var url = apiUrl();
       if (!url) { done(localOk, localOk ? 'browser' : 'fail'); return; }
+      var body = { p: pool, gx: gx, gy: gy };
+      var tok = studentTok();
+      if (tok) body.s = tok;
       fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p: pool, gx: gx, gy: gy })
-      }).then(function (r) { return r.json(); }).then(function (j) {
-        done(!!(j && j.ok) || localOk, j && j.ok ? 'db' : (localOk ? 'fallback' : 'fail'));
+        body: JSON.stringify(body)
+      }).then(function (r) { return r.json().then(function (j) { return { r: r, j: j }; }); }).then(function (x) {
+        if (x.j && x.j.error === 'voted') { done(false, 'voted'); return; }
+        done(!!(x.j && x.j.ok) || localOk, x.j && x.j.ok ? 'db' : (localOk ? 'fallback' : 'fail'));
       }).catch(function () { done(localOk, localOk ? 'fallback' : 'fail'); });
     }
 
@@ -1955,21 +1970,25 @@
       });
     }
 
-    function openLesson(slot) {
+    function openLesson(slot, forcedPool) {
       activeLesson = slot;
-      var te = teById(slot.tid);
-      var pool = poolId(slot, selected);
+      var te = slot && slot.tid ? teById(slot.tid) : null;
+      var pool = forcedPool || poolId(slot, selected);
+      var bare = !!forcedPool;
+      el.setAttribute('data-bare', bare ? '1' : '');
       listEl.hidden = true;
-      weekEl.hidden = false;
+      weekEl.hidden = bare;
       el.querySelector('.skp-h').hidden = true;
+      el.querySelector('.skp-note').hidden = bare;
+      el.querySelector('.skp-back').hidden = bare;
       rateEl.hidden = false;
       var img = (te && te.photo)
         ? '<img class="skp-face" src="' + esc(assetBase + 'teachers/' + te.photo) + '" alt="">'
         : '';
       lessonEl.innerHTML =
         img +
-        '<div><strong>' + esc(loc(slot.subject)) + '</strong>' +
-        '<div>' + esc(slot.time) + ' · ' + esc(te ? loc(te.name) : '') + '</div>' +
+        '<div><strong>' + esc(slot && slot.subject ? loc(slot.subject) : pool) + '</strong>' +
+        '<div>' + esc(slot && slot.time ? slot.time : '') + (te ? ' · ' + esc(loc(te.name)) : '') + '</div>' +
         '<div class="skp-pool">' + esc(T.pool) + ': <code>p=' + esc(pool) + '</code></div></div>';
       squareEl.innerHTML = '';
       guide(squareEl, lang);
@@ -1979,6 +1998,7 @@
           var gx = +cell.getAttribute('data-gx');
           var gy = +cell.getAttribute('data-gy');
           saveVote(pool, gx, gy, function (ok, where) {
+            if (where === 'voted') { statusEl.textContent = T.voted; return; }
             if (!ok) { statusEl.textContent = ''; return; }
             var msg = where === 'db' ? T.saved : where === 'fallback' ? T.savedLocal : T.savedBrowser;
             statusEl.textContent = msg + ' p=' + pool;
@@ -1986,18 +2006,19 @@
         });
       });
       if (opts.hash) {
-        history.replaceState(null, '', '?p=' + encodeURIComponent(pool) + '#rate');
+        history.replaceState(null, '', voteQs(pool) + '#rate');
       }
     }
 
     paintWeek();
     paintList();
 
-    /* Deep-link: ?p=3a-matematyka-0827 (or slug with teacher id) opens that lesson. */
+    /* Deep-link: timetable slug, or a minted lesson pool (ivy-harvard-lab-0907). */
     try {
       var qp = new URLSearchParams(location.search).get('p');
-      if (qp) {
+      if (qp && /^[a-z0-9-]{3,80}$/.test(qp)) {
         var parts = qp.split('-');
+        var found = null;
         if (parts.length >= 3) {
           var slug = parts.slice(1, -1).join('-');
           var mmdd = parts[parts.length - 1];
@@ -2005,17 +2026,17 @@
           var dayY = y + '-' + mmdd.slice(0, 2) + '-' + mmdd.slice(2, 4);
           if (/^\d{4}-\d{2}-\d{2}$/.test(dayY)) selected = dayY;
           var wd2 = new Date(selected + 'T12:00:00').getDay();
-          var found = null;
           var sj;
           for (sj = 0; sj < DEMO_SCHOOLS.length; sj++) {
             var pln = classPlanFor(DEMO_SCHOOLS[sj]);
             var hit = (pln.days[wd2] || []).filter(function (s) { return s.slug === slug; })[0];
             if (hit) { useSchool(DEMO_SCHOOLS[sj]); found = hit; break; }
           }
-          paintWeek();
-          paintList();
-          if (found) openLesson(found);
         }
+        paintWeek();
+        paintList();
+        if (found) openLesson(found);
+        else openLesson({ subject: { pl: qp, en: qp }, time: '', tid: '' }, qp);
       }
     } catch (e) {}
   }

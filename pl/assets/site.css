@@ -87,3 +87,34 @@ a{color:var(--accent)}
   .skp-go{grid-column:2 / -1;justify-self:start}
   .skp-face{width:40px;height:40px;border-radius:10px}
 }
+
+.skq-form{display:grid;gap:12px;max-width:36rem;margin:22px 0 8px}
+.skq-lab{margin:0;font:12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink)}
+.skq-form label{display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.skq-form input{
+  font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:9px;
+  background:var(--card);color:var(--ink)
+}
+.skq-actions{margin:4px 0 0}
+.skq-out{margin:28px 0 0}
+.skq-fig{
+  display:inline-block;vertical-align:top;margin:0 16px 22px 0;max-width:280px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center
+}
+.skq-fig img{display:block;margin:0 auto;background:#fff;border-radius:8px}
+.skq-fig figcaption{font-size:13px;margin:8px 0 0;word-break:break-word}
+.skq-fig.skq-lesson{max-width:320px}
+.skq-grid{display:flex;flex-wrap:wrap;gap:12px}
+.skq-grid .skq-fig{margin:0;max-width:160px}
+.skp-tally{color:var(--muted);font-size:14.5px}
+.skp[data-bare] .skp-week,
+.skp[data-bare] .skp-list,
+.skp[data-bare] .skp-h,
+.skp[data-bare] .skp-note,
+.skp[data-bare] .skp-back{display:none !important}
+@media print{
+  .skq-noprint,nav.top,footer,.skq-form,.hero .lede,.hero .eyebrow,.hero h1{display:none !important}
+  .skq-out{margin:0}
+  .skq-fig{break-inside:avoid}
+  body{background:#fff;color:#111}
+}
