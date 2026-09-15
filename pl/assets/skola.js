@@ -1424,7 +1424,9 @@
 
   /* ---------- TILES: Dan’s sp.html chrome (click, no labels) ----------
      Same 5×5 stream, fictional schools. No Three.js, no US joke flags.
-     Trail crumbs stack; teacher tap opens gray blox + that teacher’s lessons.
+     Trail crumbs stack; teacher tap opens a voting square (empty of others —
+     seeing the class first would steer the tap). Same cell again takes it back.
+     After you vote, the grey class picture appears on that square.
      School with no logo gets a herb generated from its name. */
   function tiles(el, opts) {
     opts = opts || {};
@@ -1505,11 +1507,11 @@
     var HINT = lang === 'pl' ? {
       schools: 'Każdy kafelek to inna szkoła — inna kadra. Kolor ramki to głosy uczniów. Herb z nazwy, jeśli szkoła nie ma własnego. Stuknij szkołę.',
       teachers: 'Każdy kafelek to nauczyciel tej szkoły. Kolor ramki — jak klasa oceniła lekcje. Stuknij nauczyciela. Kafelek szkoły u góry wraca do listy szkół.',
-      results: 'Szary kwadrat: ile stuknięć w którym polu. Góra = więcej nauki, prawo = bardziej się podobało. Pod spodem — zajęcia tego nauczyciela w planie klasy (stuknij lekcję, żeby ocenić). Mały kafelek szkoły u góry — wróć do nauczycieli.'
+      results: 'Stuknij jedno pole: góra = więcej nauki, prawo = bardziej się podobało. Drugi stuk w to samo pole cofa głos. Obraz klasy pokazuje się dopiero po Twoim głosie — najpierw Twoja odpowiedź, nie tłum.'
     } : {
       schools: 'Each tile is a different school, with its own staff. Border colour is the student votes. A school with no crest gets a shield from its name. Tap a school.',
       teachers: 'Each tile is a teacher at this school. Border colour is how the class rated the lessons. Tap a teacher. The school tile up top goes back to the school list.',
-      results: 'Grey square: how many taps landed in each cell. Up = learned more, right = liked it more. Underneath — this teacher’s classes on the timetable (tap a lesson to rate it). The small school tile up top goes back to teachers.'
+      results: 'Tap one cell: up = learned more, right = liked it more. Tap the same cell again to take it back. The class picture shows after you vote — so you answer first, not with the crowd.'
     };
     function setHint(view) {
       hintView = view;
@@ -1654,33 +1656,79 @@
       writeHash();
     }
 
-    function bloxEl(cells) {
-      var wrap = document.createElement('div');
-      wrap.className = 'skt-blox';
-      wrap.setAttribute('aria-hidden', 'true');
-      var max = 1;
-      var gy, gx, n;
+    function cellColor(gx, gy) {
+      var c = COL_RGB[gx];
+      var shade = 0.42 + 0.58 * (gy / 4);
+      return 'rgb(' + Math.round(c[0] * shade) + ',' + Math.round(c[1] * shade) + ',' + Math.round(c[2] * shade) + ')';
+    }
+    function mineKey(te) {
+      return 'skola_mine_' + (currentSchool && currentSchool.id) + '_' + te.id;
+    }
+    function readMine(te) {
+      try { return JSON.parse(localStorage.getItem(mineKey(te)) || 'null'); } catch (e) { return null; }
+    }
+    function writeMine(te, v) {
+      try {
+        if (!v) localStorage.removeItem(mineKey(te));
+        else localStorage.setItem(mineKey(te), JSON.stringify({ gx: v.gx, gy: v.gy }));
+      } catch (e) {}
+    }
+    function fillVoteBlox(wrap, te) {
+      var mine = readMine(te);
+      var classCells = cellsFromVotes(votesOf(te.id));
+      var max = 1, gy, gx, n;
       for (gy = 0; gy < 5; gy++) for (gx = 0; gx < 5; gx++) {
-        n = (cells[gy] && cells[gy][gx]) || 0;
+        n = (classCells[gy] && classCells[gy][gx]) || 0;
+        if (mine && mine.gx === gx && mine.gy === gy) n += 1;
         if (n > max) max = n;
       }
+      wrap.innerHTML = '';
+      wrap.className = 'skt-blox is-in' + (mine ? ' is-done' : '');
+      wrap.setAttribute('role', 'grid');
+      wrap.setAttribute('aria-label', lang === 'pl'
+        ? (mine ? 'Twój głos i głosy klasy' : 'Oceń — stuknij pole. Drugi stuk w to samo cofa.')
+        : (mine ? 'Your tap and the class' : 'Rate — tap a cell. Tap it again to take it back.'));
       var ci = 0;
       for (gy = 4; gy >= 0; gy--) {
         for (gx = 0; gx < 5; gx++) {
-          n = (cells[gy] && cells[gy][gx]) || 0;
-          var cell = document.createElement('div');
-          cell.className = 'cell';
-          cell.style.setProperty('--i', String(ci++));
-          if (n > 0) {
-            var v = Math.round(36 + (n / max) * 219);
-            var sq = document.createElement('div');
-            sq.className = 'sq';
-            sq.style.background = 'rgb(' + v + ',' + v + ',' + v + ')';
-            cell.appendChild(sq);
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'cell';
+          btn.style.setProperty('--i', String(ci++));
+          btn.setAttribute('data-gx', String(gx));
+          btn.setAttribute('data-gy', String(gy));
+          var isMine = !!(mine && mine.gx === gx && mine.gy === gy);
+          if (isMine) btn.classList.add('is-mine');
+          btn.setAttribute('aria-pressed', isMine ? 'true' : 'false');
+          if (mine) {
+            n = (classCells[gy] && classCells[gy][gx]) || 0;
+            if (isMine) n += 1;
+            if (n > 0) {
+              var v = Math.round(36 + (n / max) * 219);
+              var sq = document.createElement('span');
+              sq.className = 'sq';
+              sq.style.background = 'rgb(' + v + ',' + v + ',' + v + ')';
+              btn.appendChild(sq);
+            }
+          } else {
+            btn.style.background = cellColor(gx, gy);
           }
-          wrap.appendChild(cell);
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var x = +this.getAttribute('data-gx');
+            var y = +this.getAttribute('data-gy');
+            var cur = readMine(te);
+            if (cur && cur.gx === x && cur.gy === y) writeMine(te, null);
+            else writeMine(te, { gx: x, gy: y });
+            fillVoteBlox(wrap, te);
+          });
+          wrap.appendChild(btn);
         }
       }
+    }
+    function voteBlox(te) {
+      var wrap = document.createElement('div');
+      fillVoteBlox(wrap, te);
       return wrap;
     }
 
@@ -1694,10 +1742,9 @@
       currentTeacher = te;
       dayFilter = null;
       paintTrail();
-      var all = votesOf(te.id);
       var box = document.createElement('div');
       box.className = 'skt-results';
-      box.appendChild(bloxEl(cellsFromVotes(all)));
+      box.appendChild(voteBlox(te));
 
       var dow = lang === 'pl'
         ? ['', 'pn', 'wt', 'śr', 'cz', 'pt']
@@ -1718,7 +1765,7 @@
           var a = document.createElement('a');
           a.className = 'skt-lesson';
           a.style.setProperty('--i', String(i));
-          a.href = rateHref() + '?s=' + encodeURIComponent(currentSchool.id) +
+          a.href = rateHref() + '?school=' + encodeURIComponent(currentSchool.id) +
             '&p=3a-' + L.slot.slug + '-' +
             (function () {
               var d = new Date();
@@ -1735,7 +1782,7 @@
       }
       var more = document.createElement('a');
       more.className = 'skt-lessons-more';
-      more.href = rateHref() + '?s=' + encodeURIComponent(currentSchool.id);
+      more.href = rateHref() + '?school=' + encodeURIComponent(currentSchool.id);
       more.textContent = lang === 'pl' ? 'Pełny plan lekcji →' : 'Full timetable →';
       list.appendChild(more);
       box.appendChild(list);
@@ -1779,11 +1826,10 @@
     var selected = ymd(today);
     var activeLesson = null;
     try {
-      var qs = new URLSearchParams(location.search).get('s');
-      if (qs) {
-        for (var si = 0; si < DEMO_SCHOOLS.length; si++) {
-          if (DEMO_SCHOOLS[si].id === qs) { school = DEMO_SCHOOLS[si]; break; }
-        }
+      var q0 = new URLSearchParams(location.search);
+      var sid = q0.get('school') || q0.get('s') || '';
+      for (var si = 0; si < DEMO_SCHOOLS.length; si++) {
+        if (DEMO_SCHOOLS[si].id === sid) { school = DEMO_SCHOOLS[si]; break; }
       }
     } catch (e0) {}
     activePlan = classPlanFor(school);
@@ -1799,6 +1845,7 @@
       savedLocal: 'Baza niedostępna — zapisano w tej przeglądarce.',
       savedBrowser: 'Zapisano w tej przeglądarce.',
       voted: 'Ten kod już głosował na tę lekcję.',
+      undone: 'Głos cofnięty.',
       back: 'Wróć do planu',
       dow: ['nd', 'pn', 'wt', 'śr', 'cz', 'pt', 'so']
     } : {
@@ -1812,6 +1859,7 @@
       savedLocal: 'Database unreachable — saved in this browser.',
       savedBrowser: 'Saved in this browser.',
       voted: 'This code already voted on this lesson.',
+      undone: 'Vote taken back.',
       back: 'Back to timetable',
       dow: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
     };
@@ -1848,17 +1896,43 @@
       return opts.api || (typeof window !== 'undefined' && window.SKOLA_API) || '';
     }
     function saveLocal(pool, gx, gy) {
-      var key = 'skola_pool_' + pool;
-      var arr = [];
-      try { arr = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
-      arr.push({ gx: gx, gy: gy, at: Date.now() });
-      try { localStorage.setItem(key, JSON.stringify(arr)); return true; } catch (e) { return false; }
+      try {
+        localStorage.setItem('skola_pool_' + pool, JSON.stringify([{ gx: gx, gy: gy, at: Date.now() }]));
+        return true;
+      } catch (e) { return false; }
+    }
+    function isSchoolId(id) {
+      var i;
+      for (i = 0; i < DEMO_SCHOOLS.length; i++) if (DEMO_SCHOOLS[i].id === id) return true;
+      return false;
     }
     function studentTok() {
-      try { return (new URLSearchParams(location.search).get('s') || '').toLowerCase(); } catch (e) { return ''; }
+      try {
+        var s = (new URLSearchParams(location.search).get('s') || '').toLowerCase();
+        if (!s || isSchoolId(s)) return '';
+        return s;
+      } catch (e) { return ''; }
+    }
+    function choiceKey(pool) { return 'skola_choice_' + pool; }
+    function readChoice(pool) {
+      try { return JSON.parse(localStorage.getItem(choiceKey(pool)) || 'null'); } catch (e) { return null; }
+    }
+    function writeChoice(pool, v) {
+      try {
+        if (!v) {
+          localStorage.removeItem(choiceKey(pool));
+          localStorage.removeItem('skola_pool_' + pool);
+        } else {
+          localStorage.setItem(choiceKey(pool), JSON.stringify(v));
+        }
+      } catch (e) {}
     }
     function voteQs(pool) {
       var q = '?p=' + encodeURIComponent(pool);
+      try {
+        var schoolQ = new URLSearchParams(location.search).get('school');
+        if (schoolQ) q += '&school=' + encodeURIComponent(schoolQ);
+      } catch (e1) {}
       var s = studentTok();
       if (s) q += '&s=' + encodeURIComponent(s);
       return q;
@@ -1997,6 +2071,15 @@
         cell.addEventListener('click', function () {
           var gx = +cell.getAttribute('data-gx');
           var gy = +cell.getAttribute('data-gy');
+          var prev = readChoice(pool);
+          squareEl.querySelectorAll('.skg-c').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+          if (prev && prev.gx === gx && prev.gy === gy) {
+            writeChoice(pool, null);
+            statusEl.textContent = T.undone;
+            return;
+          }
+          cell.setAttribute('aria-pressed', 'true');
+          writeChoice(pool, { gx: gx, gy: gy });
           saveVote(pool, gx, gy, function (ok, where) {
             if (where === 'voted') { statusEl.textContent = T.voted; return; }
             if (!ok) { statusEl.textContent = ''; return; }
@@ -2005,6 +2088,15 @@
           });
         });
       });
+      var ch = readChoice(pool);
+      if (ch) {
+        squareEl.querySelectorAll('.skg-c').forEach(function (c) {
+          if (+c.getAttribute('data-gx') === ch.gx && +c.getAttribute('data-gy') === ch.gy) {
+            c.setAttribute('aria-pressed', 'true');
+          }
+        });
+        statusEl.textContent = T.savedBrowser;
+      }
       if (opts.hash) {
         history.replaceState(null, '', voteQs(pool) + '#rate');
       }
